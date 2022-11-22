@@ -20,37 +20,37 @@ namespace API_mokymai.Controllers
         [HttpGet]
         public ActionResult<List<GetBookDto>> Get()
         {
-            return ;
+            return new List<GetBookDto>();
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult Get(int id)
+        public ActionResult<GetBookDto> Get(int id)
         {
-            return;
+            return new GetBookDto();
         }
 
-        [HttpGet("{req:FilterBookRequest}")]
-        public ActionResult<List<GetBookDto>> Get(FilterBookRequest req)
+        [HttpGet("filter")]
+        public ActionResult<List<FilterBookRequest>> Filter([FromQuery]FilterBookRequest req)
         {
-            return;
+            return new List<FilterBookRequest>();
         }
 
-        [HttpPost("{req:CreateBookDto}")]
+        [HttpPost]
         public ActionResult<CreateBookDto> Post(CreateBookDto req)
         {
-            return;
+            return new CreateBookDto();
         }
 
-        [HttpPut("{req:UpdateBookDto}")]
-        public ActionResult<UpdateBookDto> Put(UpdateBookDto req)
+        [HttpPut("{id:int}")]
+        public ActionResult<UpdateBookDto> Put(int id, UpdateBookDto req)
         {
-            return;
+            return new UpdateBookDto();
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult<int> Delete(int id)
         {
-            return;
+            return id;
         }
 
 
