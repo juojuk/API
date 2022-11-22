@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using API_mokymai.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API_mokymai.Controllers
+namespace API_mokymai.Controllers.P001
 {
     [Route("api/[controller]")]
     [ApiController]

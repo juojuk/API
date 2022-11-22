@@ -1,3 +1,6 @@
+using API_mokymai.Data;
+using API_mokymai.Services;
+
 namespace API_mokymai
 {
     public class Program
@@ -17,6 +20,13 @@ namespace API_mokymai
                     });
             });
             // Add services to the container.
+
+            builder.Services.AddTransient<IOperationTransient, GuidService>();
+            builder.Services.AddScoped<IOperationScoped, GuidService>();
+            builder.Services.AddSingleton<IOperationSingleton, GuidService>();
+
+            builder.Services.AddSingleton<IBookSet, BookSet>();
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
