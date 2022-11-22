@@ -1,6 +1,7 @@
 ﻿using API_mokymai.Data;
 using API_mokymai.Models;
 using API_mokymai.Models.Dto;
+using API_mokymai.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,47 +11,47 @@ namespace API_mokymai.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        //private readonly IBookSet _books;
+        private readonly IBookManager _bookManager;
 
-        //public BookController(IBookSet books)
-        //{
-        //    _books = books;
-        //}
+        public BookController(IBookManager bookManager)
+        {
+            _bookManager = bookManager;
+        }
 
         [HttpGet]
         public ActionResult<List<GetBookDto>> Get()
         {
-            return new List<GetBookDto>();
+            return Ok(_bookManager.Get());
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         public ActionResult<GetBookDto> Get(int id)
         {
-            return new GetBookDto();
+            throw new NotImplementedException();
         }
 
         [HttpGet("filter")]
-        public ActionResult<List<FilterBookRequest>> Filter([FromQuery]FilterBookRequest req)
+        public ActionResult<List<GetBookDto>> Filter([FromQuery]FilterBookRequest req)
         {
-            return new List<FilterBookRequest>();
+            throw new NotImplementedException();
         }
 
         [HttpPost]
-        public ActionResult<CreateBookDto> Post(CreateBookDto req)
+        public ActionResult Post(CreateBookDto req)
         {
-            return new CreateBookDto();
+            throw new NotImplementedException();
         }
 
-        [HttpPut("{id:int}")]
-        public ActionResult<UpdateBookDto> Put(int id, UpdateBookDto req)
+        [HttpPut]
+        public ActionResult Put(UpdateBookDto req)
         {
-            return new UpdateBookDto();
+            throw new NotImplementedException();
         }
 
-        [HttpDelete("{id:int}")]
-        public ActionResult<int> Delete(int id)
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
         {
-            return id;
+            return NoContent();
         }
 
 

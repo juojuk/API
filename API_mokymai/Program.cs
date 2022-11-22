@@ -26,6 +26,9 @@ namespace API_mokymai
             builder.Services.AddSingleton<IOperationSingleton, GuidService>();
 
             builder.Services.AddSingleton<IBookSet, BookSet>();
+            builder.Services.AddTransient<IBookWrapper, BookWrapper>();
+            builder.Services.AddTransient<IBookManager, BookManager>();
+
 
 
             builder.Services.AddControllers();
