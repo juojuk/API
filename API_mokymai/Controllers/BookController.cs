@@ -27,7 +27,7 @@ namespace API_mokymai.Controllers
         [HttpGet("{id}")]
         public ActionResult<GetBookDto> Get(int id)
         {
-            throw new NotImplementedException();
+            return Ok(_bookManager.Get(id));
         }
 
         [HttpGet("filter")]

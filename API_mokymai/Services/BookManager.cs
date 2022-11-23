@@ -17,12 +17,16 @@ namespace API_mokymai.Services
 
         public List<GetBookDto> Get()
         {
-            var sarasas = _context.Books;
-            var dto = sarasas.Select(s => _wrapper.Bind(s)).ToList();
-            return dto;
+            //var sarasas = _context.Books;
+            //var dto = sarasas.Select(s => _wrapper.Bind(s)).ToList();
+            //return dto;
+            return _context.Books.Select(s => _wrapper.Bind(s)).ToList();
         }
 
-
+        public GetBookDto Get(int id)
+        {
+            return (GetBookDto)_context.Books.Where(s => _wrapper.Bind(s).Id == id);
+        }
 
     }
 }
