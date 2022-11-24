@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using P04_EF_Applying_To_API.Data;
+using System.Text.Json.Serialization;
 
 namespace P04_EF_Applying_To_API
 {
@@ -15,7 +16,8 @@ namespace P04_EF_Applying_To_API
                 option.UseSqlite(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
             });
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(option => option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
