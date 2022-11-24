@@ -81,5 +81,63 @@ namespace P04_EF_Applying_To_API.Controllers
 
             return CreatedAtRoute("GetDish", new { id = model.DishId }, dishDto);
         }
+
+        [HttpDelete("dishes/delete/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public ActionResult DeleteDish(int id)
+        {
+            if(id == 0)
+            {
+                return BadRequest();
+            }
+
+            var dish = _db.Dishes
+                .FirstOrDefault(d => d.DishId == id);
+
+            if(dish == null)
+            {
+                return NotFound();
+            }
+
+            _db.Dishes.Remove(dish);
+            _db.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpPut()]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public ActionResult UpdateDishDto(int id, UpdateDishDTO updateDishDTO)
+        {
+            if(id == 0 || updateDishDTO == null || updateDishDTO.DishId != id)
+            {
+                return BadRequest();
+            }
+
+            var foundDish = _db.Dishes.FirstOrDefault(d => d.DishId == id);
+
+            if(foundDish == null){
+                return NotFound();
+            }
+            foundDish.Name = updateDishDTO.Name;
+            foundDish.ImagePath = updateDishDTO.ImagePath;
+            foundDish.Type = updateDishDTO.Type;
+            foundDish.SpiceLevel = updateDishDTO.SpiceLevel;
+            foundDish.Country = updateDishDTO.Country;
+
+            _db.Dishes.Update(foundDish);
+            _db.SaveChanges();
+
+            return NoContent();
+        }
+
     }
 }
