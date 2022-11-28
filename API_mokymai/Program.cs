@@ -1,5 +1,6 @@
 using API_mokymai.Data;
 using API_mokymai.Services;
+using System.Reflection;
 
 namespace API_mokymai
 {
@@ -28,14 +29,22 @@ namespace API_mokymai
             builder.Services.AddSingleton<IBookSet, BookSet>();
             builder.Services.AddTransient<IBookWrapper, BookWrapper>();
             builder.Services.AddTransient<IBookManager, BookManager>();
+            builder.Services.AddTransient<IBadService, BadService>();
+            builder.Services.AddTransient<IDalybaService, DalybaService>();
+
+
 
 
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
+            builder.Services.AddSwaggerGen(option =>
+            {
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                option.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
