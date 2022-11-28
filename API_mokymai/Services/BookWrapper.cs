@@ -11,7 +11,7 @@ namespace API_mokymai.Services
             return new GetBookDto() 
             { 
                 Id = book.Id, 
-                PavadinimasIrAutorius = $"{ book.Cover } + { book.Author }",
+                PavadinimasIrAutorius = $"{ book.Cover } { book.Author }",
                 LeidybosMetai = book.PublishYear
             };
 

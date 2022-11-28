@@ -25,7 +25,9 @@ namespace API_mokymai.Services
 
         public GetBookDto Get(int id)
         {
-            return (GetBookDto)_context.Books.Where(s => _wrapper.Bind(s).Id == id);
+            //return (GetBookDto)_context.Books.Where(s => _wrapper.Bind(s).Id == id);
+            //return _context.Books.FirstOrDefault(i => i.Id == id);
+            return _wrapper.Bind(_context.Books.FirstOrDefault(i => i.Id == id));
         }
 
     }

@@ -17,7 +17,10 @@ namespace P04_EF_Applying_To_API.Controllers
         {
             _db = db;
         }
-
+        /// <summary>
+        /// Fetches all registered dishes in the DB
+        /// </summary>
+        /// <returns>All dishes in DB</returns>
         [HttpGet("dishes")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetDishDTO>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -28,7 +31,12 @@ namespace P04_EF_Applying_To_API.Controllers
                 .Select(d => new GetDishDTO(d))
                 .ToList());
         }
-
+        /// <summary>
+        /// Fetch registered dish with a specified ID from DB
+        /// </summary>
+        /// <param name="id">Requested dish ID</param>
+        /// <response>
+        /// <returns>Dish with specified ID</returns>
         [HttpGet("dishes/{id:int}", Name = "GetDish")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetDishDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
