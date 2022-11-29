@@ -2,9 +2,9 @@
 
 namespace API_mokymai.Data
 {
-    public class BookSet : IBookSet
+    public static class BookSet
     {
-        private List<Book> bookList = new List<Book>()
+        static private List<Book> bookList = new List<Book>()
         {
             new Book(1, "Orange", "Spainito", ECoverType.Electronic, 1900),
             new Book(2, "Apple", "Spainito", ECoverType.Electronic, 1910),
@@ -18,7 +18,7 @@ namespace API_mokymai.Data
             new Book(10, "Aguonos", "Lithuanis", ECoverType.Electronic, 1990),
         };
 
-        public List<Book> Books { get { return bookList; } set { bookList = value; } }
+        static public List<Book> Books { get { return bookList; } set { bookList = value; } }
 
     }
 }

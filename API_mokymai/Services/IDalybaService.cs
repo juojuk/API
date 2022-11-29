@@ -2,6 +2,6 @@
 {
     public interface IDalybaService
     {
-        int Dalyba(int a, int b);
+        double Dalyba(int a, int b);
     }
 }

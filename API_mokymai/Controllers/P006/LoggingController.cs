@@ -83,27 +83,28 @@ namespace API_mokymai.Controllers.P006
 4. Padarykite exception loginimą kuriame matytųsi gauta klaida, įvesti skaičiai ir klaidos data
  */
         /// <summary>
-        /// 
+        /// Dalybos veiksmas
         /// </summary>
         /// <returns></returns>
-        [HttpGet("Get/{a:int}/{b:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet("Dalyba/{a:int}/{b:int}")]
+        [ProducesResponseType(typeof(double),StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
 
         public IActionResult Get(int a, int b) 
         {
-            _logger.LogInformation("DalybaService atliko dalybos veiksma {a} iš {b}", DateTime.Now);
+            _logger.LogInformation("DalybaService atliko dalybos veiksma {a} iš {b) {time}", a, b, DateTime.Now);
             try
             {
                 _dalybaService.Dalyba(a, b);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "DalybaService {0}", DateTime.Now);
+                _logger.LogError(e, "DalybaService {0} atliko dalybą iš nulio", DateTime.Now);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return Ok();
+            return Ok(_dalybaService.Dalyba(a, b));
         }
 
 

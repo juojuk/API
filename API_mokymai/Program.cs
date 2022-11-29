@@ -1,5 +1,6 @@
 using API_mokymai.Data;
 using API_mokymai.Services;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace API_mokymai
@@ -26,17 +27,22 @@ namespace API_mokymai
             builder.Services.AddScoped<IOperationScoped, GuidService>();
             builder.Services.AddSingleton<IOperationSingleton, GuidService>();
 
-            builder.Services.AddSingleton<IBookSet, BookSet>();
+            //builder.Services.AddSingleton<IBookSet, BookSet>();
             builder.Services.AddTransient<IBookWrapper, BookWrapper>();
-            builder.Services.AddTransient<IBookManager, BookManager>();
+            //builder.Services.AddTransient<IBookManager, BookManager>();
             builder.Services.AddTransient<IBadService, BadService>();
             builder.Services.AddTransient<IDalybaService, DalybaService>();
 
 
-
+            builder.Services.AddDbContext<BookContext>(option =>
+            {
+                option.UseSqlite(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+            });
 
 
             builder.Services.AddControllers();
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(option =>

@@ -2,8 +2,17 @@
 {
     public class DalybaService: IDalybaService
     {
-        public int Dalyba(int a, int b)
+        public double Dalyba(int a, int b)
         {
+            //double result;
+            //try
+            //{
+            //    result = a / b;
+            //}
+            //catch (DivideByZeroException e)
+            //{
+            //    return 0;
+            //}
             return a/b;
         }
 
