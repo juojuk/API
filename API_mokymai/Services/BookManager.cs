@@ -6,7 +6,9 @@ namespace API_mokymai.Services
 {
     public class BookManager: IBookManager
     {
+        //public BookManager(IBookSet context, IBookWrapper wrapper)
         public BookManager(IBookSet context, IBookWrapper wrapper)
+
         {
             _context = context;
             _wrapper = wrapper;

@@ -1,7 +1,9 @@
-﻿using API_mokymai.Models.Dto;
+﻿using API_mokymai.Models;
+using API_mokymai.Models.Dto;
 using API_mokymai.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net.Mime;
 
 namespace API_mokymai.Controllers.P006
@@ -60,16 +62,22 @@ namespace API_mokymai.Controllers.P006
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
 
-        public IActionResult GetBadService()
+        public IActionResult GetBadService(int a)
         {
-            _logger.LogInformation("BadService buvo iskviestas {time}", DateTime.Now);
+            var b = new Person
+            {
+                Name = "Petras",
+                Surname = "Petraitis",
+            };
+
+            _logger.LogInformation("BadService buvo iskvietas {time} a={a} b={b}", DateTime.Now, a, JsonConvert.SerializeObject(b));
             try
             {
                 _badService.DoSomeWork();
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Blogas servisas nulužo {0}", DateTime.Now);
+                _logger.LogError(e, "Blogas servisas nuluzo {time}", DateTime.Now);
             }
             return Ok(new GetServiceResult(555555));
         }
