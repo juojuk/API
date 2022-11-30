@@ -110,7 +110,7 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetBookDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
-        public ActionResult<List<GetBookDto>> Filter([FromQuery]FilterBookRequest req)
+        public ActionResult<List<GetBookDto>> Filter([FromQuery]FilterBookRequest filter)
         {
             throw new NotImplementedException();
         }
@@ -120,9 +120,25 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
-        public ActionResult Post(CreateBookDto req)
+        public IActionResult Post([FromQuery] CreateBookDto book)
         {
-            throw new NotImplementedException();
+            if (book == null)
+            {
+                return BadRequest();
+            }
+
+            Book model = new Book()
+            {
+                Title = book.Pavadinimas,
+                Author = book.Autorius,
+                Cover = Enum.Parse<ECoverType>(book.KnygosTipas),
+                PublishYear = book.Isleista.Year,
+            };
+
+            _db.Books.Add(model);
+            _db.SaveChanges();
+
+            return CreatedAtRoute("filter", new { id = model.Id }, book);
         }
 
         [HttpPut]
