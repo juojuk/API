@@ -72,6 +72,36 @@ namespace API_mokymai.Controllers
         }
 
         /// <summary>
+        /// Searches book by ID in the DB
+        /// </summary>
+        /// <returns>Returns boolean status if book exists in the DB</returns>
+
+        [HttpGet("exists")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces(MediaTypeNames.Application.Json)]
+        public IActionResult Exists([FromQuery] int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+
+            var status = _db.Books
+                .Any(b => b.Id == id);
+
+            if (!status)
+            {
+                return NotFound();
+            }
+
+            return Ok(status);
+        }
+
+
+        /// <summary>
         /// Fetches filtered books in the DB
         /// </summary>
         /// <returns>Filtered books in DB</returns>

@@ -32,5 +32,13 @@ namespace API_mokymai.Services
             return _wrapper.Bind(_context.Books.FirstOrDefault(i => i.Id == id));
         }
 
+        public bool Exists(int id)
+        {
+            //return (GetBookDto)_context.Books.Where(s => _wrapper.Bind(s).Id == id);
+            //return _context.Books.FirstOrDefault(i => i.Id == id);
+            return _context.Books.Any(i => i.Id == id);
+        }
+
+
     }
 }
