@@ -17,6 +17,6 @@
         public string Type { get; set; }
         public string SpiceLevel { get; set; }
         public string Country { get; set; }
-        public List<GetRecipeItemDTO> RecipeItems { get; set; }
+        public List<GetRecipeItemDTO> RecipeItems { get; set; } = new List<GetRecipeItemDTO>();
     }
 }

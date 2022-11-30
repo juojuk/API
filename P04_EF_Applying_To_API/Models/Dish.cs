@@ -29,6 +29,8 @@ namespace P04_EF_Applying_To_API.Models
         public string Country { get; set; }
         public string ImagePath { get; set; }
         public DateTime CreateDateTime { get; set; }
-        public List<RecipeItem> RecipeItems { get; set; }
+        public DateTime UpdateDateTime { get; set; }
+
+        public virtual List<RecipeItem> RecipeItems { get; set; }
     }
 }

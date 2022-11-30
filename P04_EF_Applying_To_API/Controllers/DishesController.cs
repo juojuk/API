@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using P04_EF_Applying_To_API.Data;
 using P04_EF_Applying_To_API.Models;
 using P04_EF_Applying_To_API.Models.Dto;
+using P04_EF_Applying_To_API.Repository.IRepository;
 
 namespace P04_EF_Applying_To_API.Controllers
 {
@@ -11,11 +12,11 @@ namespace P04_EF_Applying_To_API.Controllers
     [ApiController]
     public class DishesController : ControllerBase
     {
-        private readonly RestaurantContext _db;
+        private readonly IDishRepository _dishRepo;
 
-        public DishesController(RestaurantContext db)
+        public DishesController(IDishRepository dishRepo)
         {
-            _db = db;
+            _dishRepo = dishRepo;
         }
         /// <summary>
         /// Fetches all registered dishes in the DB
@@ -26,8 +27,7 @@ namespace P04_EF_Applying_To_API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<IEnumerable<GetDishDTO>> GetDishes()
         {
-            return Ok(_db.Dishes
-                .Include(d => d.RecipeItems)
+            return Ok(_dishRepo.GetAll()
                 .Select(d => new GetDishDTO(d))
                 .ToList());
         }
@@ -51,9 +51,7 @@ namespace P04_EF_Applying_To_API.Controllers
 
             // Tam, kad istraukti duomenis naudokite
             // First, FirstOrDefault, Single, SingleOrDefault, ToList
-            var dish = _db.Dishes
-                .Include(d => d.RecipeItems)
-                .FirstOrDefault(d => d.DishId == id);
+            var dish = _dishRepo.Get(d => d.DishId == id);
 
             if (dish == null)
             {
@@ -84,8 +82,7 @@ namespace P04_EF_Applying_To_API.Controllers
                 ImagePath = dishDto.ImagePath
             };
 
-            _db.Dishes.Add(model);
-            _db.SaveChanges();
+            _dishRepo.Create(model);
 
             return CreatedAtRoute("GetDish", new { id = model.DishId }, dishDto);
         }
@@ -103,16 +100,14 @@ namespace P04_EF_Applying_To_API.Controllers
                 return BadRequest();
             }
 
-            var dish = _db.Dishes
-                .FirstOrDefault(d => d.DishId == id);
+            var dish = _dishRepo.Get(d => d.DishId == id);
 
             if(dish == null)
             {
                 return NotFound();
             }
 
-            _db.Dishes.Remove(dish);
-            _db.SaveChanges();
+            _dishRepo.Remove(dish);
 
             return NoContent();
         }
@@ -125,12 +120,12 @@ namespace P04_EF_Applying_To_API.Controllers
 
         public ActionResult UpdateDishDto(int id, UpdateDishDTO updateDishDTO)
         {
-            if(id == 0 || updateDishDTO == null || updateDishDTO.DishId != id)
+            if(id == 0 || updateDishDTO == null)
             {
                 return BadRequest();
             }
 
-            var foundDish = _db.Dishes.FirstOrDefault(d => d.DishId == id);
+            var foundDish = _dishRepo.Get(d => d.DishId == id);
 
             if(foundDish == null){
                 return NotFound();
@@ -141,8 +136,7 @@ namespace P04_EF_Applying_To_API.Controllers
             foundDish.SpiceLevel = updateDishDTO.SpiceLevel;
             foundDish.Country = updateDishDTO.Country;
 
-            _db.Dishes.Update(foundDish);
-            _db.SaveChanges();
+            _dishRepo.Update(foundDish);
 
             return NoContent();
         }
