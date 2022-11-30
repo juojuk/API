@@ -114,7 +114,11 @@ namespace API_mokymai.Controllers
         {
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="book"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GetBookDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -140,7 +144,11 @@ namespace API_mokymai.Controllers
 
             return CreatedAtRoute("filter", new { id = model.Id }, book);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="book"></param>
+        /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
