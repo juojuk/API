@@ -146,9 +146,32 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult Put(UpdateBookDto req)
+        [Produces(MediaTypeNames.Application.Json)]
+
+        public IActionResult Update([FromQuery] UpdateBookDto book)
         {
-            throw new NotImplementedException();
+            if (book.Id == 0 || book == null)
+            {
+                return BadRequest();
+            }
+
+            var foundBook = _db.Books
+                .FirstOrDefault(d => d.Id == book.Id);
+
+            if (foundBook == null)
+            {
+                return NotFound();
+            }
+
+            foundBook.Title = book.Pavadinimas;
+            foundBook.Author = book.Autorius;
+            foundBook.Cover = Enum.Parse<ECoverType>(book.KnygosTipas);
+            foundBook.PublishYear = book.Isleista.Year;
+
+            _db.Books.Update(foundBook);
+            _db.SaveChanges();
+
+            return NoContent();
         }
 
 
@@ -157,8 +180,26 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces(MediaTypeNames.Application.Json)]
+
         public ActionResult Delete(int id)
         {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+
+            var book = _db.Books
+                .FirstOrDefault(d => d.Id == id);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            _db.Books.Remove(book);
+            _db.SaveChanges();
+
             return NoContent();
         }
 
