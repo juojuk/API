@@ -29,27 +29,45 @@ namespace API_mokymai.Repository
 
         public void Create(TEntity entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Add(entity);
+            Save();
         }
 
         public TEntity Get(Expression<Func<TEntity, bool>>? filter, bool tracked = true)
         {
-            throw new NotImplementedException();
+            IQueryable<TEntity> query = _dbSet;
+
+            if (!tracked)
+            {
+                query = query.AsNoTracking();
+            }
+
+            query = query.Where(filter);
+
+            return query.FirstOrDefault();
         }
 
         public List<TEntity> GetAll(Expression<Func<TEntity, bool>>? filter = null)
         {
-            throw new NotImplementedException();
+            IQueryable<TEntity> query = _dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return query.ToList();
         }
 
         public void Remove(TEntity entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Remove(entity);
+            Save();
         }
 
         public void Save()
         {
-            throw new NotImplementedException();
+            _db.SaveChanges();
         }
     }
 }

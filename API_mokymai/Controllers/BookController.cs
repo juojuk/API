@@ -1,6 +1,7 @@
 ﻿using API_mokymai.Data;
 using API_mokymai.Models;
 using API_mokymai.Models.Dto;
+using API_mokymai.Repository.IRepository;
 using API_mokymai.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +15,13 @@ namespace API_mokymai.Controllers
     public class BookController : ControllerBase
     {
         //private readonly IBookManager _bookManager;
-        private readonly BookContext _db;
+        //private readonly BookContext _db;
+        private readonly IBookRepository _bookRepo;
         private readonly IBookWrapper _bookWrapper;
 
-        public BookController(BookContext db, IBookWrapper bookWrapper)
+        public BookController(IBookRepository bookRepo, IBookWrapper bookWrapper)
         {
-            _db = db;
+            _bookRepo = bookRepo;
             _bookWrapper = bookWrapper;
         }
 
@@ -34,7 +36,7 @@ namespace API_mokymai.Controllers
         public ActionResult<List<GetBookDto>> Get()
         {
             //return Ok(_bookManager.Get());
-            return Ok(_db.Books.Select(b => _bookWrapper.Bind(b)).ToList());
+            return Ok(_bookRepo.GetAll().Select(b => _bookWrapper.Bind(b)).ToList());
         }
 
         /// <summary>
@@ -60,8 +62,7 @@ namespace API_mokymai.Controllers
 
             // Tam, kad istraukti duomenis naudokite
             // First, FirstOrDefault, Single, SingleOrDefault, ToList
-            var book = _db.Books
-                .FirstOrDefault(b => b.Id == id);
+            var book = _bookRepo.Get(b => b.Id == id);
 
             if (book == null)
             {
@@ -89,7 +90,7 @@ namespace API_mokymai.Controllers
                 return BadRequest();
             }
 
-            var status = _db.Books
+            var status = _bookRepo.GetAll()
                 .Any(b => b.Id == id);
 
             if (!status)
@@ -139,8 +140,7 @@ namespace API_mokymai.Controllers
                 PublishYear = book.Isleista.Year,
             };
 
-            _db.Books.Add(model);
-            _db.SaveChanges();
+            _bookRepo.Create(model);
 
             return CreatedAtRoute("filter", new { id = model.Id }, book);
         }
@@ -163,8 +163,7 @@ namespace API_mokymai.Controllers
                 return BadRequest();
             }
 
-            var foundBook = _db.Books
-                .FirstOrDefault(d => d.Id == book.Id);
+            var foundBook = _bookRepo.Get(d => d.Id == book.Id);
 
             if (foundBook == null)
             {
@@ -176,8 +175,8 @@ namespace API_mokymai.Controllers
             foundBook.Cover = Enum.Parse<ECoverType>(book.KnygosTipas);
             foundBook.PublishYear = book.Isleista.Year;
 
-            _db.Books.Update(foundBook);
-            _db.SaveChanges();
+            _bookRepo.Update(foundBook);
+            _bookRepo.Save();
 
             return NoContent();
         }
@@ -197,16 +196,14 @@ namespace API_mokymai.Controllers
                 return BadRequest();
             }
 
-            var book = _db.Books
-                .FirstOrDefault(d => d.Id == id);
+            var book = _bookRepo.Get(d => d.Id == id);
 
             if (book == null)
             {
                 return NotFound();
             }
 
-            _db.Books.Remove(book);
-            _db.SaveChanges();
+            _bookRepo.Remove(book);
 
             return NoContent();
         }

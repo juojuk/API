@@ -1,4 +1,6 @@
 using API_mokymai.Data;
+using API_mokymai.Repository;
+using API_mokymai.Repository.IRepository;
 using API_mokymai.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -32,11 +34,13 @@ namespace API_mokymai
             //builder.Services.AddTransient<IBookManager, BookManager>();
             builder.Services.AddTransient<IBadService, BadService>();
             builder.Services.AddTransient<IDalybaService, DalybaService>();
+            builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 
             builder.Services.AddDbContext<BookContext>(option =>
             {
                 option.UseSqlite(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+                option.UseLazyLoadingProxies();
             });
 
 
