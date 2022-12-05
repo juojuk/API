@@ -1,0 +1,12 @@
+﻿aplikacija automobiliu registras
+iššūkiai:
+1. kažkas kas viską kontroliuoja. Tai bus Controller
+2. mums reikia kuo greičiau atiduoti darbus front-end, t.y. reikalinga Swagger dokumentacija ir sukurti DTO kontraktą
+3. nuspręsti kokia yra biznio logika. Biznio modeliai ir servisai
+4. duomenų bazė. EF, migracijos
+5. programa atvira modifikacijoms. DI
+6. programa turi būti gera ir testuojama. Repository
+7. programa turi turėti diagnostiką produkcinėje erdvėje. Logger
+8. Validacijos. Attribute validations
+9. Autentifikacija. JWT
+10. Automatinis testavimas. Unit testai
