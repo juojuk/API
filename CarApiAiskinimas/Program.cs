@@ -1,3 +1,8 @@
+using CarApiAiskinimas.Database;
+using CarApiAiskinimas.Models;
+using CarApiAiskinimas.Repositories;
+using CarApiAiskinimas.Services;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace CarApiAiskinimas
@@ -9,6 +14,13 @@ namespace CarApiAiskinimas
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddDbContext<CarContext>(options =>
+            {
+                options.UseSqlite(builder.Configuration.GetConnectionString("CarConnectionString"));
+            });
+
+            builder.Services.AddTransient<IRepository<Car>, CarRepository>();
+            builder.Services.AddTransient<ICarAdapter, CarAdapter>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
