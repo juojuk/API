@@ -3,6 +3,7 @@ using CarApiAiskinimas.Models.Dto;
 using CarApiAiskinimas.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 
 /*aplikacija automobiliu registras
@@ -13,10 +14,11 @@ iððûkiai:
 + 4. duomenø bazë. EF, migracijos
 + 5. programa turi bûti gera ir testuojama. Repository
 + 6. programa atvira modifikacijoms. DI + moodeliø Adapteris(Services)
-7. programa turi turëti diagnostikà produkcinëje erdvëje. Logger
-8. Validacijos. Attribute validations
++ 7. programa turi turëti diagnostikà produkcinëje erdvëje. Logger
++ 8. Validacijos. Attribute validations
 9. Autentifikacija. JWT
-10. Automatinis testavimas. Unit testai*/
+10. Automatinis testavimas. Unit testai
+*/
 
 namespace CarApiAiskinimas.Controllers
 {
@@ -132,10 +134,38 @@ namespace CarApiAiskinimas.Controllers
         /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+
         [Consumes(MediaTypeNames.Application.Json)]
         public IActionResult Put(PutCarRequest req)
         {
+            if (!Enum.TryParse<ECarGearBox>(req.GearBox, out _))
+            {
+                var validValues = Enum.GetNames(typeof(ECarGearBox));
+                ModelState.AddModelError(nameof(req.GearBox), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
+            };
+
+            if (!Enum.TryParse<ECarFuel>(req.Fuel, out _))
+            {
+                var validValues = Enum.GetNames(typeof(ECarFuel));
+                ModelState.AddModelError(nameof(req.Fuel), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
+            };
+
+
+            if (ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            if (!_repository.Exist(req.Id))
+            {
+                _logger.LogInformation("Car with id {id} not found", req.Id);
+                return NotFound();
+            }
+
+            var entity = _adapter.Bind(req);
+            _repository.Update(entity);
 
             return NoContent();
         }
@@ -150,6 +180,15 @@ namespace CarApiAiskinimas.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         public IActionResult Delete(int id)
         {
+            if (!_repository.Exist(id))
+            {
+                _logger.LogInformation("Car with id {id} not found", id);
+                return NotFound();
+            }
+
+            var entity = _repository.Get(id);
+            _repository.Remove(entity);
+
             return NoContent();
         }
 
