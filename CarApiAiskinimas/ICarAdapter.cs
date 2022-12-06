@@ -6,5 +6,6 @@ namespace CarApiAiskinimas
     public interface ICarAdapter
     {
         public GetCarResult Bind(Car car);
+        Car Bind(PostCarRequest car);
     }
 }

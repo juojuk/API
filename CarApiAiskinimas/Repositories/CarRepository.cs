@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace CarApiAiskinimas.Repositories
 {
-    public class CarRepository : IRepository<Car>
+    public class CarRepository : ICarRepository
     {
         private readonly CarContext _context;
 

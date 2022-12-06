@@ -18,5 +18,17 @@ namespace CarApiAiskinimas.Services
                 Fuel = car.Fuel.ToString()
             };
         }
+        public Car Bind(PostCarRequest car)
+        {
+            return new Car
+            {
+                Mark = car.Mark,
+                Model = car.Model,
+                Year = DateTime.Parse(car.Year),
+                PlateNumber = car.PlateNumber ?? "neregistruota",
+                GearBox = Enum.Parse<ECarGearBox>(car.GearBox),
+                Fuel = Enum.Parse<ECarFuel>(car.Fuel)
+            };
+        }
     }
 }
