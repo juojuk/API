@@ -102,6 +102,24 @@ namespace CarApiAiskinimas.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         public IActionResult Post([FromBody]PostCarRequest req)
         {
+            if(!Enum.TryParse<ECarGearBox>(req.GearBox, out _))
+            {
+                var validValues = Enum.GetNames(typeof(ECarGearBox));
+                ModelState.AddModelError(nameof(req.GearBox), $"Not valid value. Valid values are: {string.Join(", ",validValues)}");
+            };
+
+            if (!Enum.TryParse<ECarFuel>(req.Fuel, out _))
+            {
+                var validValues = Enum.GetNames(typeof(ECarFuel));
+                ModelState.AddModelError(nameof(req.Fuel), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
+            };
+
+
+            if (ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var entity = _adapter.Bind(req);
             var id = _repository.Create(entity);
 

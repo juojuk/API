@@ -13,7 +13,7 @@ namespace CarApiAiskinimas.Models.Dto
         [MaxLength(50, ErrorMessage = "Mark cannot be longer than 50 characters")]
         public string Model { get; set; }
         /// <summary>
-        /// Automobilio pagaminimo metai formatu yyyy-MM-dd
+        /// Automobilio pagaminimo metai formatu yyyy-MM-dd. Galimi metai nuo 1900-01-01 iki 2021-01-01
         /// </summary>
         [Range(typeof(DateTime), "1900-01-01", "2021-01-01", ErrorMessage = "Year must be between 1900-01-01 and 2021-01-01")]
         public string Year { get; set; }
