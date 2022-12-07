@@ -13,6 +13,11 @@ namespace API_mokymai.Repository
             _db = db;
         }
 
+        public bool Exist(int id)
+        {
+            return _db.Books.Any(x => x.Id == id);
+        }
+
         public Book Update(Book book)
         {
             _db.Books.Update(book);
@@ -20,6 +25,5 @@ namespace API_mokymai.Repository
 
             return book;
         }
-    }
     }
 }

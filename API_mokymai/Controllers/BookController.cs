@@ -6,6 +6,7 @@ using API_mokymai.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Net.Mime;
 
 namespace API_mokymai.Controllers
@@ -18,26 +19,28 @@ namespace API_mokymai.Controllers
         //private readonly BookContext _db;
         private readonly IBookRepository _bookRepo;
         private readonly IBookWrapper _bookWrapper;
+        private readonly ILogger<BookController> _logger;
 
-        public BookController(IBookRepository bookRepo, IBookWrapper bookWrapper)
+        public BookController(IBookRepository bookRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
         {
             _bookRepo = bookRepo;
             _bookWrapper = bookWrapper;
+            _logger = logger;
         }
 
         /// <summary>
         /// Fetches all registered books in the DB
         /// </summary>
         /// <returns>All books in DB</returns>
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetBookDto>))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Produces(MediaTypeNames.Application.Json)]
-        public ActionResult<List<GetBookDto>> Get()
-        {
-            //return Ok(_bookManager.Get());
-            return Ok(_bookRepo.GetAll().Select(b => _bookWrapper.Bind(b)).ToList());
-        }
+        //[HttpGet]
+        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetBookDto>))]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Produces(MediaTypeNames.Application.Json)]
+        //public ActionResult<List<GetBookDto>> Get()
+        //{
+        //    //return Ok(_bookManager.Get());
+        //    return Ok(_bookRepo.GetAll().Select(b => _bookWrapper.Bind(b)).ToList());
+        //}
 
         /// <summary>
         /// Fetch registered book with a specified ID from DB
@@ -55,8 +58,9 @@ namespace API_mokymai.Controllers
         public ActionResult<GetBookDto> Get([FromQuery]int id)
         {
             //return Ok(_bookManager.Get(id));
-            if (id == 0)
+            if (id.GetType() != typeof(System.Int32))
             {
+                _logger.LogInformation("Bad type of Book id {id}", id);
                 return BadRequest();
             }
 
@@ -66,6 +70,7 @@ namespace API_mokymai.Controllers
 
             if (book == null)
             {
+                _logger.LogInformation("Book with id {id} not found", id);
                 return NotFound();
             }
 
@@ -85,8 +90,9 @@ namespace API_mokymai.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         public IActionResult Exists([FromQuery] int id)
         {
-            if (id == 0)
+            if (id.GetType() != typeof(System.Int32))
             {
+                _logger.LogInformation("Bad type of Book id {id}", id);
                 return BadRequest();
             }
 
@@ -95,6 +101,7 @@ namespace API_mokymai.Controllers
 
             if (!status)
             {
+                _logger.LogInformation("Book with id {id} not found", id);
                 return NotFound();
             }
 
@@ -111,25 +118,49 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetBookDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
-        public ActionResult<List<GetBookDto>> Filter([FromQuery]FilterBookRequest filter)
+        public ActionResult<List<GetBookDto>> Filter([FromQuery]FilterBookRequest req)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation("Getting book list with parameters {req}", JsonConvert.SerializeObject(req));
+
+            IEnumerable<Book> entities = _bookRepo.GetAll().ToList();
+
+            if (req.Pavadinimas != null)
+                entities = entities.Where(x => x.Title == req.Pavadinimas);
+
+            if (req.Autorius != null)
+                entities = entities.Where(x => x.Author == req.Autorius);
+
+            if (req.KnygosTipas != null)
+                entities = entities.Where(x => x.Cover == Enum.Parse<ECoverType>(req.KnygosTipas));
+
+            var model = entities?.Select(x => _bookWrapper.Bind(x));
+
+            return Ok(model);
         }
         /// <summary>
-        /// 
+        /// Irasoma knyga i duomenu baze
         /// </summary>
         /// <param name="book"></param>
         /// <returns></returns>
+        /// <response code="400">paduodamos informacijos validacijos klaidos </response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GetBookDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public IActionResult Post([FromQuery] CreateBookDto book)
         {
-            if (book == null)
+            if (!Enum.TryParse(typeof(ECoverType), book.KnygosTipas, out _))
             {
-                return BadRequest();
+                var validValues = Enum.GetNames(typeof(ECoverType));
+                ModelState.AddModelError(nameof(book.KnygosTipas), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogInformation("Getting book list with wrong parameters {book}", JsonConvert.SerializeObject(book));
+                return ValidationProblem(ModelState);
             }
 
             Book model = new Book()
