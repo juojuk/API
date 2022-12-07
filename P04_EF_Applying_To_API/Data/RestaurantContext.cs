@@ -15,6 +15,7 @@ namespace P04_EF_Applying_To_API.Data
         //Prop pavadinimas = lentelės pavadinimas
         public DbSet<Dish> Dishes { get; set; }
         public DbSet<RecipeItem> RecipeItems { get; set; }
+        public DbSet<LocalUser> LocalUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

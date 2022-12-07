@@ -20,6 +20,7 @@ namespace P04_EF_Applying_To_API
                 option.UseLazyLoadingProxies();
             });
             builder.Services.AddScoped<IDishRepository, DishRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             builder.Services.AddControllers()
                 .AddJsonOptions(option => option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
