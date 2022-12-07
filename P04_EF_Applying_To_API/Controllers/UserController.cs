@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using P04_EF_Applying_To_API.Models.Dto;
 using P04_EF_Applying_To_API.Repository.IRepository;
 
-namespace P04_EF_Applying_To_API.Data
+namespace P04_EF_Applying_To_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
