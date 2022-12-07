@@ -84,6 +84,8 @@ namespace P04_EF_Applying_To_API.Repository
                 User = user
             };
 
+            loginResponse.User.Password = "";
+
             return loginResponse;
         }
 

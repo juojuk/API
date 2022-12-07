@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using P04_EF_Applying_To_API.Data;
@@ -62,6 +63,7 @@ namespace P04_EF_Applying_To_API.Controllers
         }
 
         [HttpPost("dishes")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateDishDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
