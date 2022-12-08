@@ -5,6 +5,8 @@ using Microsoft.OpenApi.Models;
 using P04_EF_Applying_To_API.Data;
 using P04_EF_Applying_To_API.Repository;
 using P04_EF_Applying_To_API.Repository.IRepository;
+using P04_EF_Applying_To_API.Services;
+using P04_EF_Applying_To_API.Services.IServices;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -25,6 +27,8 @@ namespace P04_EF_Applying_To_API
             });
             builder.Services.AddScoped<IDishRepository, DishRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IPasswordService, PasswordService>();
+            builder.Services.AddScoped<IJwtService, JwtService>();
 
             var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
