@@ -14,15 +14,18 @@ namespace API_mokymai.Data
         // Registruojamos lenteles
         // Prop pavadinimas = Lenteles pavadinimas
         public DbSet<Book> Books { get; set; }
+        public DbSet<Person> Persons { get; set; }
+        public DbSet<Role> Roles { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Data-seeding
+            //Data - seeding
             modelBuilder.Entity<Book>()
                 .HasData(
                 BookSet.Books
                 );
-
         }
     }
 }

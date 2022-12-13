@@ -1,10 +1,10 @@
 ﻿namespace API_mokymai.Models
 {
-    public class Person
+    public class Staff
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
-        public string Email { get; set; }
+        public virtual Role Role { get; set; }
     }
 }

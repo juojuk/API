@@ -159,7 +159,7 @@ namespace API_mokymai.Controllers
 
             if (!ModelState.IsValid)
             {
-                _logger.LogInformation("Getting book list with wrong parameters {book}", JsonConvert.SerializeObject(book));
+                _logger.LogInformation("Getting book list with wrong    parameters {book}", JsonConvert.SerializeObject(book));
                 return ValidationProblem(ModelState);
             }
 

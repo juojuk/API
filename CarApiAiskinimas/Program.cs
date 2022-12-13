@@ -21,6 +21,8 @@ namespace CarApiAiskinimas
 
             builder.Services.AddTransient<ICarRepository, CarRepository>();
             builder.Services.AddTransient<ICarAdapter, CarAdapter>();
+            builder.Services.AddTransient<ICarLeasingService, CarLeasingService>();
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
