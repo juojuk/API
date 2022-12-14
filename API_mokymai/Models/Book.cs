@@ -25,5 +25,6 @@ namespace API_mokymai.Models
         public ECoverType Cover { get; set; }
         public int PublishYear { get; set; }
         public int Quantity { get; set; } = 0;
+        public virtual List<Reservation> Reservations { get; set; }
     }
 }

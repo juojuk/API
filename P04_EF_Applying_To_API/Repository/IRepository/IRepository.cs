@@ -5,11 +5,11 @@ namespace P04_EF_Applying_To_API.Repository.IRepository
     public interface IRepository<TEntity> where TEntity : class
     {
         // CRUD
-        List<TEntity> GetAll(Expression<Func<TEntity, bool>>? filter = null);
-        TEntity Get(Expression<Func<TEntity, bool>> filter, bool tracked = true);
-        void Create(TEntity entity);
-        void Remove(TEntity entity);
-        void Save();
+        Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? filter = null);
+        Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter, bool tracked = true);
+        Task CreateAsync(TEntity entity);
+        Task RemoveAsync(TEntity entity);
+        Task SaveAsync();
 
     }
 }
