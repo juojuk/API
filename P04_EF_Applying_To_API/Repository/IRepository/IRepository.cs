@@ -9,6 +9,7 @@ namespace P04_EF_Applying_To_API.Repository.IRepository
         Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter, bool tracked = true);
         Task CreateAsync(TEntity entity);
         Task RemoveAsync(TEntity entity);
+        //Task<bool> ExistAsync(int id);
         Task SaveAsync();
 
     }

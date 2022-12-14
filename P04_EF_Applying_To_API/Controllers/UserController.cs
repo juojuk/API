@@ -17,9 +17,9 @@ namespace P04_EF_Applying_To_API.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest model)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest model)
         {
-            var loginResponse = _userRepo.Login(model);
+            var loginResponse = await _userRepo.LoginAsync(model);
 
             if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
@@ -30,16 +30,16 @@ namespace P04_EF_Applying_To_API.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegistrationRequest model)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegistrationRequest model)
         {
-            var isUserNameUnique = _userRepo.IsUniqueUser(model.Username);
+            var isUserNameUnique = await _userRepo.IsUniqueUserAsync(model.Username);
 
             if (!isUserNameUnique)
             {
                 return BadRequest(new { message = "Username already exists" });
             }
 
-            var user = _userRepo.Register(model);
+            var user = await _userRepo.RegisterAsync(model);
 
             if (user == null)
             {

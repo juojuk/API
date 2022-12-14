@@ -5,8 +5,8 @@ namespace P04_EF_Applying_To_API.Repository.IRepository
 {
     public interface IUserRepository
     {
-        public bool IsUniqueUser(string username);
-        public LoginResponse Login(LoginRequest loginRequest);
-        public LocalUser Register(RegistrationRequest registrationRequest);
+        public Task<bool> IsUniqueUserAsync(string username);
+        public Task<LoginResponse> LoginAsync(LoginRequest loginRequest);
+        public Task<LocalUser> RegisterAsync(RegistrationRequest registrationRequest);
     }
 }
