@@ -26,6 +26,37 @@ namespace API_mokymai.Data
                 .HasData(
                 BookSet.Books
                 );
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(b => b.Book)
+                .WithMany(d => d.Reservations)
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Reservation>()
+                .HasOne(b => b.Person)
+                .WithMany(d => d.Reservations)
+                .HasForeignKey(d => d.PersonId)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Reservation>()
+                .HasOne(b => b.Measure)
+                .WithMany(d => d.Reservations)
+                .HasForeignKey(d => d.MeasureId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Person>()
+                .HasOne(r => r.Role)
+                .WithMany(p => p.Persons)
+                .HasForeignKey(k => k.RoleId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Staff>()
+                .HasOne(r => r.Role)
+                .WithMany(s => s.Staff)
+                .HasForeignKey(k => k.RoleId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+
+
         }
     }
 }
