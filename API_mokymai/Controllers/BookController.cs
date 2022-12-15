@@ -2,7 +2,7 @@
 using API_mokymai.Models;
 using API_mokymai.Models.Dto;
 using API_mokymai.Repository.IRepository;
-using API_mokymai.Services;
+using API_mokymai.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API_mokymai", "API_mokymai.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{85634872-C20F-427F-A2E5-6BE94844304E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarApiAiskinimasTests", "..\CarApiAiskinimasTests\CarApiAiskinimasTests.csproj", "{EC010398-0915-445E-BA7B-7633958EAD8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarApiAiskinimasTests", "..\CarApiAiskinimasTests\CarApiAiskinimasTests.csproj", "{EC010398-0915-445E-BA7B-7633958EAD8D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarApiAiskinimas", "..\CarApiAiskinimas\CarApiAiskinimas.csproj", "{4DFDA84E-40F5-4E6E-B13D-D0045013B120}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P04_EF_Applying_To_API", "..\P04_EF_Applying_To_API\P04_EF_Applying_To_API.csproj", "{377CCB64-648C-48CA-90D7-DAFF5AEC3656}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{4DFDA84E-40F5-4E6E-B13D-D0045013B120}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DFDA84E-40F5-4E6E-B13D-D0045013B120}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DFDA84E-40F5-4E6E-B13D-D0045013B120}.Release|Any CPU.Build.0 = Release|Any CPU
+		{377CCB64-648C-48CA-90D7-DAFF5AEC3656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{377CCB64-648C-48CA-90D7-DAFF5AEC3656}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{377CCB64-648C-48CA-90D7-DAFF5AEC3656}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{377CCB64-648C-48CA-90D7-DAFF5AEC3656}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

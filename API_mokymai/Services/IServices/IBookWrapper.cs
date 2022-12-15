@@ -1,7 +1,7 @@
 ﻿using API_mokymai.Models;
 using API_mokymai.Models.Dto;
 
-namespace API_mokymai.Services
+namespace API_mokymai.Services.IServices
 {
     public interface IBookWrapper
     {

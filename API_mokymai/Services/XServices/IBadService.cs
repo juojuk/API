@@ -1,4 +1,4 @@
-﻿namespace API_mokymai.Services
+﻿namespace API_mokymai.Services.XServices
 {
     public interface IBadService
     {

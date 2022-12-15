@@ -1,6 +1,6 @@
-﻿namespace API_mokymai.Services
+﻿namespace API_mokymai.Services.XServices
 {
-    public class DalybaService: IDalybaService
+    public class DalybaService : IDalybaService
     {
         public double Dalyba(int a, int b)
         {
@@ -13,7 +13,7 @@
             //{
             //    return 0;
             //}
-            return a/b;
+            return a / b;
         }
 
     }

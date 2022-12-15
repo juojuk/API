@@ -49,14 +49,6 @@ namespace API_mokymai.Data
                 .HasForeignKey(k => k.RoleId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Staff>()
-                .HasOne(r => r.Role)
-                .WithMany(s => s.Staff)
-                .HasForeignKey(k => k.RoleId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-
-
         }
     }
 }
