@@ -24,6 +24,12 @@ namespace P04_EF_Applying_To_API.Repository
             _jwtService = jwtService;
         }
 
+        public async Task<bool> IsRegisteredAsync(int userId)
+        {
+            var isRegistred = await _db.LocalUsers.AnyAsync(u => u.Id == userId);
+            return isRegistred; 
+        }
+
         /// <summary>
         /// Should return a flag indicating if a user with a specified username already exists
         /// </summary>

@@ -70,5 +70,17 @@ namespace P04_EF_Applying_To_API.Repository
             await _db.SaveChangesAsync();
         }
 
+        public async Task<bool> ExistAsync(Expression<Func<TEntity, bool>> filter)
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            if (filter == null)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            return await query.AnyAsync(filter);
+        }
     }
 }

@@ -6,6 +6,8 @@ using P04_EF_Applying_To_API.Data;
 using P04_EF_Applying_To_API.Repository;
 using P04_EF_Applying_To_API.Repository.IRepository;
 using P04_EF_Applying_To_API.Services;
+using P04_EF_Applying_To_API.Services.Adapters;
+using P04_EF_Applying_To_API.Services.Adapters.IAdapters;
 using P04_EF_Applying_To_API.Services.IServices;
 using System.Reflection;
 using System.Text;
@@ -25,10 +27,16 @@ namespace P04_EF_Applying_To_API
                 option.UseSqlite(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
                 option.UseLazyLoadingProxies();
             });
+
             builder.Services.AddScoped<IDishRepository, DishRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IDishOrderRepository, DishOrderRepository>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
             builder.Services.AddScoped<IJwtService, JwtService>();
+            builder.Services.AddTransient<IDishOrderAdapter, DishOrderAdapter>();
+            builder.Services.AddTransient<ICookingService, CookingService>();
+
+
 
             var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
