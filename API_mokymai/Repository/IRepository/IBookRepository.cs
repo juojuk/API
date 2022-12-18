@@ -4,7 +4,7 @@ namespace API_mokymai.Repository.IRepository
 {
     public interface IBookRepository: IRepository<Book>
     {
-        Book Update(Book book);
-        bool Exist(int id);
+        Task<Book> UpdateAsync(Book book);
+        Task<bool> ExistAsync(int id);
     }
 }

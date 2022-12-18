@@ -14,7 +14,7 @@ namespace API_mokymai.Services
             _secretKey = conf.GetValue<string>("ApiSettings:Secret");
         }
 
-        public string GetJwtToken(int userId, int roleId)
+        public string GetJwtToken(string email, int roleId)
         {
             // To generate JWT token
             // 1. To generate a JWT token we need a secret.
@@ -37,7 +37,7 @@ namespace API_mokymai.Services
                 // Claim is required to identify WHO is the client/entity/person that is trying to use our application
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, userId.ToString()),
+                    new Claim(ClaimTypes.Email, email),
                     new Claim(ClaimTypes.Role, roleId.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),

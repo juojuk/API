@@ -55,7 +55,7 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
-        public ActionResult<GetBookDto> Get([FromQuery]int id)
+        public async Task<ActionResult<GetBookDto>> Get([FromQuery]int id)
         {
             //return Ok(_bookManager.Get(id));
             if (id.GetType() != typeof(System.Int32))
@@ -66,7 +66,7 @@ namespace API_mokymai.Controllers
 
             // Tam, kad istraukti duomenis naudokite
             // First, FirstOrDefault, Single, SingleOrDefault, ToList
-            var book = _bookRepo.Get(b => b.Id == id);
+            var book = await _bookRepo.GetAsync(b => b.Id == id);
 
             if (book == null)
             {
@@ -88,7 +88,7 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
-        public IActionResult Exists([FromQuery] int id)
+        public async Task<IActionResult> ExistsAsync([FromQuery] int id)
         {
             if (id.GetType() != typeof(System.Int32))
             {
@@ -96,10 +96,9 @@ namespace API_mokymai.Controllers
                 return BadRequest();
             }
 
-            var status = _bookRepo.GetAll()
-                .Any(b => b.Id == id);
+            var status = await _bookRepo.GetAllAsync();
 
-            if (!status)
+            if (!status.Any(b => b.Id == id))
             {
                 _logger.LogInformation("Book with id {id} not found", id);
                 return NotFound();
@@ -118,11 +117,11 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetBookDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
-        public ActionResult<List<GetBookDto>> Filter([FromQuery]FilterBookRequest req)
+        public async Task<ActionResult<List<GetBookDto>>> Filter([FromQuery]FilterBookRequest req)
         {
             _logger.LogInformation("Getting book list with parameters {req}", JsonConvert.SerializeObject(req));
 
-            IEnumerable<Book> entities = _bookRepo.GetAll().ToList();
+            IEnumerable<Book> entities = await _bookRepo.GetAllAsync();
 
             if (req.Pavadinimas != null)
                 entities = entities.Where(x => x.Title == req.Pavadinimas);
@@ -149,7 +148,7 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult Post([FromQuery] CreateBookDto book)
+        public async Task<IActionResult> Post([FromQuery] CreateBookDto book)
         {
             if (!Enum.TryParse(typeof(ECoverType), book.KnygosTipas, out _))
             {
@@ -171,7 +170,7 @@ namespace API_mokymai.Controllers
                 PublishYear = book.Isleista.Year,
             };
 
-            _bookRepo.Create(model);
+            await _bookRepo.CreateAsync(model);
 
             return CreatedAtRoute("filter", new { id = model.Id }, book);
         }
@@ -187,14 +186,14 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
 
-        public IActionResult Update([FromQuery] UpdateBookDto book)
+        public async Task<IActionResult> Update([FromQuery] UpdateBookDto book)
         {
             if (book.Id == 0 || book == null)
             {
                 return BadRequest();
             }
 
-            var foundBook = _bookRepo.Get(d => d.Id == book.Id);
+            var foundBook = await _bookRepo.GetAsync(d => d.Id == book.Id);
 
             if (foundBook == null)
             {
@@ -206,8 +205,8 @@ namespace API_mokymai.Controllers
             foundBook.Cover = Enum.Parse<ECoverType>(book.KnygosTipas);
             foundBook.PublishYear = book.Isleista.Year;
 
-            _bookRepo.Update(foundBook);
-            _bookRepo.Save();
+            await _bookRepo.UpdateAsync(foundBook);
+            await _bookRepo.SaveAsync();
 
             return NoContent();
         }
@@ -220,29 +219,24 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
 
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             if (id == 0)
             {
                 return BadRequest();
             }
 
-            var book = _bookRepo.Get(d => d.Id == id);
+            var book = await _bookRepo.GetAsync(d => d.Id == id);
 
             if (book == null)
             {
                 return NotFound();
             }
 
-            _bookRepo.Remove(book);
+            await _bookRepo.RemoveAsync(book);
 
             return NoContent();
         }
-
-
-
-
-
 
     }
 }

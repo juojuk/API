@@ -2,9 +2,15 @@
 {
     public class Role
     {
+        public Role(int id, string member)
+        {
+            Id = id;
+            Member = member;
+        }
+
         public int Id { get; set; }
         public string Member { get; set; }
         public virtual List<Person> Persons { get; set; }
-
     }
+
 }

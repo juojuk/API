@@ -27,7 +27,7 @@ namespace API_mokymai.Repository
         /// <summary>
         /// Should return a flag indicating if a user with a specified username already exists
         /// </summary>
-        /// <param name="username">Registration username</param>
+        /// <param name="email">Registration username</param>
         /// <returns>A flag indicating if username already exists</returns>
         public async Task<bool> IsUniqueUserAsync(string email)
         {
@@ -53,7 +53,7 @@ namespace API_mokymai.Repository
                 };
             }
 
-            var token = _jwtService.GetJwtToken(user.Id, user.RoleId);
+            var token = _jwtService.GetJwtToken(user.Email, user.RoleId);
 
             LoginResponse loginResponse = new()
             {
@@ -117,6 +117,7 @@ namespace API_mokymai.Repository
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 Name = registrationRequest.Name,
+                Surname = registrationRequest.Surname,
                 RoleId = registrationRequest.RoleId
             };
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_mokymai.Controllers.P001
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Route("api/[controller]")]
     [ApiController]
     public class PersonController : ControllerBase

@@ -15,6 +15,7 @@ namespace API_mokymai.Controllers.P006
     /// <response code = "200">Teisingai ivykdoma loginimo logika ir gaunama informacija</response>
     /// <response code = "500">Vaje labai baisi klaida</response>
 
+    //[ApiExplorerSettings(IgnoreApi = true)]
     [Route("api/[controller]")]
     [ApiController]
     public class LoggingController : ControllerBase

@@ -27,13 +27,13 @@ namespace API_mokymai.Repository
             _dbSet = _db.Set<TEntity>();
         }
 
-        public void Create(TEntity entity)
+        public async Task CreateAsync(TEntity entity)
         {
             _dbSet.Add(entity);
-            Save();
+            await SaveAsync();
         }
 
-        public TEntity Get(Expression<Func<TEntity, bool>>? filter, bool tracked = true)
+        public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>>? filter, bool tracked = true)
         {
             IQueryable<TEntity> query = _dbSet;
 
@@ -44,10 +44,10 @@ namespace API_mokymai.Repository
 
             query = query.Where(filter);
 
-            return query.FirstOrDefault();
+            return await query.FirstOrDefaultAsync();
         }
 
-        public List<TEntity> GetAll(Expression<Func<TEntity, bool>>? filter = null)
+        public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? filter = null)
         {
             IQueryable<TEntity> query = _dbSet;
 
@@ -56,18 +56,31 @@ namespace API_mokymai.Repository
                 query = query.Where(filter);
             }
 
-            return query.ToList();
+            return await query.ToListAsync();
         }
 
-        public void Remove(TEntity entity)
+        public async Task RemoveAsync(TEntity entity)
         {
             _dbSet.Remove(entity);
-            Save();
+            await SaveAsync();
         }
 
-        public void Save()
+        public async Task SaveAsync()
         {
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistAsync(Expression<Func<TEntity, bool>> filter)
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            if (filter == null)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            return await query.AnyAsync(filter);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using API_mokymai.Data;
 using API_mokymai.Models;
 using API_mokymai.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace API_mokymai.Repository
 {
@@ -13,15 +14,15 @@ namespace API_mokymai.Repository
             _db = db;
         }
 
-        public bool Exist(int id)
+        public async Task<bool> ExistAsync(int id)
         {
-            return _db.Books.Any(x => x.Id == id);
+            return await _db.Books.AnyAsync(x => x.Id == id);
         }
 
-        public Book Update(Book book)
+        public async Task<Book> UpdateAsync(Book book)
         {
             _db.Books.Update(book);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return book;
         }

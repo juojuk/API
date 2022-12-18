@@ -14,8 +14,11 @@ namespace API_mokymai.Data
         // Registruojamos lenteles
         // Prop pavadinimas = Lenteles pavadinimas
         public DbSet<Book> Books { get; set; }
+        public DbSet<Measure> Measures { get; set; }
         public DbSet<Person> Persons { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
+
 
 
 
@@ -25,6 +28,11 @@ namespace API_mokymai.Data
             modelBuilder.Entity<Book>()
                 .HasData(
                 BookSet.Books
+                );
+
+            modelBuilder.Entity<Role>()
+                .HasData(
+                RoleSet.Roles
                 );
 
             modelBuilder.Entity<Reservation>()
@@ -43,6 +51,9 @@ namespace API_mokymai.Data
                 .HasForeignKey(d => d.MeasureId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<Person>()
+                .HasIndex(i => i.Email)
+                .IsUnique();
             modelBuilder.Entity<Person>()
                 .HasOne(r => r.Role)
                 .WithMany(p => p.Persons)
