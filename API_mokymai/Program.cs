@@ -38,10 +38,11 @@ namespace API_mokymai
             //builder.Services.AddSingleton<IOperationSingleton, GuidService>();
             //builder.Services.AddSingleton<IBookSet, BookSet>();
             builder.Services.AddTransient<IBookWrapper, BookWrapper>();
-            //builder.Services.AddTransient<IBookManager, BookManager>();
+            builder.Services.AddTransient<IBookManager, BookManager>();
             //builder.Services.AddTransient<IBadService, BadService>();
             //builder.Services.AddTransient<IDalybaService, DalybaService>();
             builder.Services.AddScoped<IBookRepository, BookRepository>();
+            builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
             builder.Services.AddScoped<IJwtService, JwtService>();

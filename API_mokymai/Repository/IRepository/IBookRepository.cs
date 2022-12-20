@@ -6,5 +6,7 @@ namespace API_mokymai.Repository.IRepository
     {
         Task<Book> UpdateAsync(Book book);
         Task<bool> ExistAsync(int id);
+
+
     }
 }

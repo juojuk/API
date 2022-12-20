@@ -15,14 +15,15 @@ namespace API_mokymai.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        //private readonly IBookManager _bookManager;
+        private readonly IBookManager _bookManager;
         //private readonly BookContext _db;
         private readonly IBookRepository _bookRepo;
         private readonly IBookWrapper _bookWrapper;
         private readonly ILogger<BookController> _logger;
 
-        public BookController(IBookRepository bookRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
+        public BookController(IBookManager bookManager, IBookRepository bookRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
         {
+            _bookManager = bookManager;
             _bookRepo = bookRepo;
             _bookWrapper = bookWrapper;
             _logger = logger;
@@ -57,7 +58,6 @@ namespace API_mokymai.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         public async Task<ActionResult<GetBookDto>> Get([FromQuery]int id)
         {
-            //return Ok(_bookManager.Get(id));
             if (id.GetType() != typeof(System.Int32))
             {
                 _logger.LogInformation("Bad type of Book id {id}", id);
@@ -76,6 +76,34 @@ namespace API_mokymai.Controllers
 
             return Ok(_bookWrapper.Bind(book));
         }
+
+        [HttpGet("available")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetBookDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces(MediaTypeNames.Application.Json)]
+        public async Task<ActionResult<GetBookDto>> GetAvailable([FromQuery] int id)
+        {
+            if (id.GetType() != typeof(System.Int32))
+            {
+                _logger.LogInformation("Bad type of Book id {id}", id);
+                return BadRequest();
+            }
+
+            // Tam, kad istraukti duomenis naudokite
+            // First, FirstOrDefault, Single, SingleOrDefault, ToList
+            var book = await _bookRepo.GetAsync(b => b.Id == id);
+
+            if (book == null)
+            {
+                _logger.LogInformation("Book with id {id} not found", id);
+                return NotFound();
+            }
+
+            return Ok(_bookWrapper.Bind(book));
+        }
+
 
         /// <summary>
         /// Searches book by ID in the DB
@@ -96,15 +124,15 @@ namespace API_mokymai.Controllers
                 return BadRequest();
             }
 
-            var status = await _bookRepo.GetAllAsync();
+            var foundBook = await _bookRepo.ExistAsync(id);
 
-            if (!status.Any(b => b.Id == id))
+            if (!foundBook)
             {
                 _logger.LogInformation("Book with id {id} not found", id);
                 return NotFound();
             }
 
-            return Ok(status);
+            return Ok(foundBook);
         }
 
 

@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarApiAiskinimas", "..\CarA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P04_EF_Applying_To_API", "..\P04_EF_Applying_To_API\P04_EF_Applying_To_API.csproj", "{377CCB64-648C-48CA-90D7-DAFF5AEC3656}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApiTests", "..\BookApiTests\BookApiTests.csproj", "{11DFB516-A9CB-426C-A94C-9957D8CD8929}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,12 +37,17 @@ Global
 		{377CCB64-648C-48CA-90D7-DAFF5AEC3656}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{377CCB64-648C-48CA-90D7-DAFF5AEC3656}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{377CCB64-648C-48CA-90D7-DAFF5AEC3656}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11DFB516-A9CB-426C-A94C-9957D8CD8929}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11DFB516-A9CB-426C-A94C-9957D8CD8929}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11DFB516-A9CB-426C-A94C-9957D8CD8929}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11DFB516-A9CB-426C-A94C-9957D8CD8929}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EC010398-0915-445E-BA7B-7633958EAD8D} = {85634872-C20F-427F-A2E5-6BE94844304E}
+		{11DFB516-A9CB-426C-A94C-9957D8CD8929} = {85634872-C20F-427F-A2E5-6BE94844304E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EEC18680-C307-48F0-B93E-FD42340FC329}
