@@ -40,5 +40,16 @@ namespace API_mokymai.Services
             };
         }
 
+        public Measure Bind(CreateMeasureDto measure)
+        {
+            return new Measure()
+            {
+                MaxBorrowingDays = measure.SkolosTrukmeDienomis,
+                MaxOverdueBooks = measure.NegrazintuKnyguSkaicius,
+                MaxBooksOnHand = measure.IsduotuKnyguSkaicius,
+                MinBorrowingFee = measure.MinimaliSkolosSuma,
+                MaxBorrowingFee = measure.MaksimaliSkolosSuma
+            };
+        }
     }
 }

@@ -2,6 +2,7 @@ using API_mokymai.Data;
 using API_mokymai.Models;
 using API_mokymai.Repository;
 using API_mokymai.Repository.IRepository;
+using API_mokymai.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections;
@@ -13,13 +14,6 @@ namespace BookApiTests
     [TestClass]
     public class BookServiseTests
     {
-        private readonly IBookRepository _bookRepo;
-        public BookServiseTests(IBookRepository bookRepo)
-        {
-            _bookRepo = bookRepo;
-        }
-
-
         [AssemblyInitialize] //pirmas dalykas kuri bus paleistas
         public static void MyAssemblyInitialize(TestContext context)
         {
@@ -39,28 +33,14 @@ namespace BookApiTests
         [TestMethod]
         public void CanBorrowBookTest()
         {
-            //var actual = _bookRepo.GetAsync(i => i.Id == 1);
-            //var expected = true;
+            var fakeBook = BookSet.Books.First();
+            var fakeReservations = ReservationSet.Reservations;
 
-            //Assert.AreEqual(expected, actual.Result.Quantity > 0);
+            var sut = new BookManager();
+            var actual = sut.IsAvailableBook(fakeBook, fakeReservations);
+            var expected = false;
 
-            //sukuriame imituojanti servisa
-            var repoMockBook = new Mock<IBookRepository>();
-            var repoMockReservation = new Mock<IReservationRepository>();
-
-
-            //konfiguruojame imituojanti servisa
-            var fakeRepoBook = BookSet.Books.First();
-            var fakeRepoReservation = ReservationSet.Reservations;
-
-            repoMockBook.Setup(r => r.GetAsync(b => b.Id == fakeRepoBook.Id, true)).ReturnsAsync(fakeRepoBook);
-            repoMockReservation.Setup(r => r.GetAllAsync(b => b.BookId == fakeRepoBook.Id)).ReturnsAsync(fakeRepoReservation);
-            //var sut = new CarLeasingService(repository_mock.Object);
-            //sut.ChangeYear(1, 2001);
-
-            //repository_mock.Verify(r => r.Update(fakeObj), Times.Once);
-            //var expected = new DateTime(2001, 1, 1);
-            //Assert.AreEqual(expected, fakeObj.Year);
+            Assert.AreEqual(actual, expected);
 
         }
     }

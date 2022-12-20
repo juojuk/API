@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public int MaxBorrowingDays { get; set; }
         public int MaxOverdueBooks { get; set; }
-        public int MaxBooksOnHand { get; set; } //max 5 knygos
+        public int MaxBooksOnHand { get; set; }
         public decimal MinBorrowingFee { get; set; }
         public decimal MaxBorrowingFee { get; set; }
         public virtual List<Reservation> Reservations{ get; set; }

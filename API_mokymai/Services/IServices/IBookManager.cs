@@ -8,7 +8,7 @@ namespace API_mokymai.Services.IServices
         //List<GetBookDto> Get();
         //GetBookDto Get(int id);
 
-        bool IsAvailableBook(Book book, List<Reservation> reservation);
+        bool IsAvailableBook(Book book, List<Reservation> reservations);
 
     }
 }

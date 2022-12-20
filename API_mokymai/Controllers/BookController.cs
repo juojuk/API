@@ -94,7 +94,7 @@ namespace API_mokymai.Controllers
             }
 
             var book = await _bookRepo.GetAsync(b => b.Id == id);
-            var reservation = await _reservationRepo.GetAllAsync(b => b.Id == id);
+            var reservations = await _reservationRepo.GetAllAsync(b => b.Id == id);
 
 
             if (book == null)
@@ -104,7 +104,7 @@ namespace API_mokymai.Controllers
             }
 
 
-            return Ok(_bookManager.IsAvailableBook(book, reservation));
+            return Ok(_bookManager.IsAvailableBook(book, reservations));
         }
 
 
@@ -173,7 +173,7 @@ namespace API_mokymai.Controllers
         /// <param name="book"></param>
         /// <returns></returns>
         /// <response code="400">paduodamos informacijos validacijos klaidos </response>
-        [HttpPost]
+        [HttpPost("book")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GetBookDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -205,6 +205,41 @@ namespace API_mokymai.Controllers
 
             return CreatedAtRoute("filter", new { id = model.Id }, book);
         }
+
+        [HttpPost("measure")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GetBookDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> Post([FromQuery] CreateBookDto book)
+        {
+            if (!Enum.TryParse(typeof(ECoverType), book.KnygosTipas, out _))
+            {
+                var validValues = Enum.GetNames(typeof(ECoverType));
+                ModelState.AddModelError(nameof(book.KnygosTipas), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogInformation("Getting book list with wrong    parameters {book}", JsonConvert.SerializeObject(book));
+                return ValidationProblem(ModelState);
+            }
+
+            Book model = new Book()
+            {
+                Title = book.Pavadinimas,
+                Author = book.Autorius,
+                Cover = Enum.Parse<ECoverType>(book.KnygosTipas),
+                PublishYear = book.Isleista.Year,
+            };
+
+            await _bookRepo.CreateAsync(model);
+
+            return CreatedAtRoute("filter", new { id = model.Id }, book);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
