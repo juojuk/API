@@ -46,6 +46,13 @@ namespace API_mokymai
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
             builder.Services.AddScoped<IJwtService, JwtService>();
+            builder.Services.AddHttpClient("FakeApi", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["ExternalServices:FakeApiUri"]);
+                client.Timeout = TimeSpan.FromSeconds(10);
+                client.DefaultRequestHeaders.Clear();
+            });
+            builder.Services.AddTransient<IFakeApiProxyService, FakeApiProxyService>();
 
             var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 

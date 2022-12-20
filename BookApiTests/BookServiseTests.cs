@@ -37,7 +37,7 @@ namespace BookApiTests
         }
 
         [TestMethod]
-        public void CanBorrowBook()
+        public void CanBorrowBookTest()
         {
             //var actual = _bookRepo.GetAsync(i => i.Id == 1);
             //var expected = true;
@@ -45,12 +45,16 @@ namespace BookApiTests
             //Assert.AreEqual(expected, actual.Result.Quantity > 0);
 
             //sukuriame imituojanti servisa
-            var repoMock = new Mock<IBookRepository>();
+            var repoMockBook = new Mock<IBookRepository>();
+            var repoMockReservation = new Mock<IReservationRepository>();
+
 
             //konfiguruojame imituojanti servisa
-            Book fakeRepoBook = BookSet.Books.First();
-            repoMock.Setup(r => r.GetAsync(b => b.Id == fakeRepoBook.Id, true)).ReturnsAsync(fakeRepoBook);
+            var fakeRepoBook = BookSet.Books.First();
+            var fakeRepoReservation = ReservationSet.Reservations;
 
+            repoMockBook.Setup(r => r.GetAsync(b => b.Id == fakeRepoBook.Id, true)).ReturnsAsync(fakeRepoBook);
+            repoMockReservation.Setup(r => r.GetAllAsync(b => b.BookId == fakeRepoBook.Id)).ReturnsAsync(fakeRepoReservation);
             //var sut = new CarLeasingService(repository_mock.Object);
             //sut.ChangeYear(1, 2001);
 

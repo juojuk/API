@@ -1,4 +1,5 @@
-﻿using API_mokymai.Models.Dto;
+﻿using API_mokymai.Models;
+using API_mokymai.Models.Dto;
 
 namespace API_mokymai.Services.IServices
 {
@@ -7,7 +8,7 @@ namespace API_mokymai.Services.IServices
         //List<GetBookDto> Get();
         //GetBookDto Get(int id);
 
-        int GetAvailable(int id);
+        bool IsAvailableBook(Book book, List<Reservation> reservation);
 
     }
 }

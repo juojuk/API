@@ -18,13 +18,15 @@ namespace API_mokymai.Controllers
         private readonly IBookManager _bookManager;
         //private readonly BookContext _db;
         private readonly IBookRepository _bookRepo;
+        private readonly IReservationRepository _reservationRepo;
         private readonly IBookWrapper _bookWrapper;
         private readonly ILogger<BookController> _logger;
 
-        public BookController(IBookManager bookManager, IBookRepository bookRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
+        public BookController(IBookManager bookManager, IBookRepository bookRepo, IReservationRepository reservationRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
         {
             _bookManager = bookManager;
             _bookRepo = bookRepo;
+            _reservationRepo = reservationRepo;
             _bookWrapper = bookWrapper;
             _logger = logger;
         }
@@ -83,7 +85,7 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
-        public async Task<ActionResult<GetBookDto>> GetAvailable([FromQuery] int id)
+        public async Task<ActionResult<bool>> GetAvailable([FromQuery] int id)
         {
             if (id.GetType() != typeof(System.Int32))
             {
@@ -91,9 +93,9 @@ namespace API_mokymai.Controllers
                 return BadRequest();
             }
 
-            // Tam, kad istraukti duomenis naudokite
-            // First, FirstOrDefault, Single, SingleOrDefault, ToList
             var book = await _bookRepo.GetAsync(b => b.Id == id);
+            var reservation = await _reservationRepo.GetAllAsync(b => b.Id == id);
+
 
             if (book == null)
             {
@@ -101,7 +103,8 @@ namespace API_mokymai.Controllers
                 return NotFound();
             }
 
-            return Ok(_bookWrapper.Bind(book));
+
+            return Ok(_bookManager.IsAvailableBook(book, reservation));
         }
 
 

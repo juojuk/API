@@ -39,9 +39,9 @@ namespace API_mokymai.Services
         //        //return _context.Books.FirstOrDefault(i => i.Id == id);
         //        return _context.Books.Any(i => i.Id == id);
         //    }
-        public GetBookDto GetAvailable(int id)
+        public bool IsAvailableBook(Book book, List<Reservation> reservation)
         {
-            throw new NotImplementedException();
+            return book.Quantity > reservation.Count(b => b.ReturnDateTime == null) ? true : false ;
         }
     }
 }
