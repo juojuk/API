@@ -1,6 +1,8 @@
 ﻿using API_mokymai.Data;
 using API_mokymai.Models;
 using API_mokymai.Models.Dto;
+using API_mokymai.Repository;
+using API_mokymai.Repository.IRepository;
 using API_mokymai.Services.IServices;
 
 namespace API_mokymai.Services

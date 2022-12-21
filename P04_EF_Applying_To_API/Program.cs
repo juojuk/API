@@ -27,16 +27,14 @@ namespace P04_EF_Applying_To_API
                 option.UseSqlite(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
                 option.UseLazyLoadingProxies();
             });
-
             builder.Services.AddScoped<IDishRepository, DishRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IDishOrderRepository, DishOrderRepository>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
             builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddTransient<IDishOrderAdapter, DishOrderAdapter>();
+            builder.Services.AddTransient<IDishAdapter, DishAdapter>();
             builder.Services.AddTransient<ICookingService, CookingService>();
-
-
 
             var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
@@ -59,6 +57,7 @@ namespace P04_EF_Applying_To_API
                 });
 
             builder.Services.AddControllers()
+                .AddNewtonsoftJson()
                 .AddJsonOptions(option => option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -68,14 +67,15 @@ namespace P04_EF_Applying_To_API
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 option.IncludeXmlComments(xmlPath);
 
+                // This is added to show JWT UI part in Swagger
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
                     Description =
                         "JWT Authorization header is using Bearer scheme. \r\n\r\n" +
                         "Enter 'Bearer' and token separated by a space. \r\n\r\n" +
                         "Example: \"Bearer d5f41g85d1f52a\"",
-                    Name = "Authorization", 
-                    In =  ParameterLocation.Header,
+                    Name = "Authorization", // Header key name
+                    In = ParameterLocation.Header,
                     Scheme = "Bearer",
                     BearerFormat = "JWT"
                 });
@@ -110,7 +110,7 @@ namespace P04_EF_Applying_To_API
 
             app.UseHttpsRedirection();
 
-            app.UseAuthentication(); //Order matters
+            app.UseAuthentication(); // Order matters
             app.UseAuthorization();
 
 

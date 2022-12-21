@@ -3,6 +3,7 @@ using API_mokymai.Models;
 using API_mokymai.Models.Dto;
 using API_mokymai.Repository.IRepository;
 using API_mokymai.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,14 +19,16 @@ namespace API_mokymai.Controllers
         private readonly IBookManager _bookManager;
         //private readonly BookContext _db;
         private readonly IBookRepository _bookRepo;
+        private readonly IMeasureRepository _measureRepo;
         private readonly IReservationRepository _reservationRepo;
         private readonly IBookWrapper _bookWrapper;
         private readonly ILogger<BookController> _logger;
 
-        public BookController(IBookManager bookManager, IBookRepository bookRepo, IReservationRepository reservationRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
+        public BookController(IBookManager bookManager, IBookRepository bookRepo, IMeasureRepository measureRepo, IReservationRepository reservationRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
         {
             _bookManager = bookManager;
             _bookRepo = bookRepo;
+            _measureRepo = measureRepo;
             _reservationRepo = reservationRepo;
             _bookWrapper = bookWrapper;
             _logger = logger;
@@ -206,37 +209,37 @@ namespace API_mokymai.Controllers
             return CreatedAtRoute("filter", new { id = model.Id }, book);
         }
 
+        /// <summary>
+        /// Irašomi rodikliai i duomenų bazę
+        /// </summary>
+        /// <param name="measure"></param>
+        /// <returns></returns>
+        /// <response code="401">Neautorizuotas vartotojas</response>
+
         [HttpPost("measure")]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GetBookDto))]
+        [Authorize(Roles = "admin")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateMeasureDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> Post([FromQuery] CreateBookDto book)
+        public async Task<IActionResult> Post(CreateMeasureDto measure)
         {
-            if (!Enum.TryParse(typeof(ECoverType), book.KnygosTipas, out _))
-            {
-                var validValues = Enum.GetNames(typeof(ECoverType));
-                ModelState.AddModelError(nameof(book.KnygosTipas), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
-            }
+            _logger.LogInformation("Getting measure with wrong parameters {measure}", JsonConvert.SerializeObject(measure));
 
-            if (!ModelState.IsValid)
+            Measure model = new Measure()
             {
-                _logger.LogInformation("Getting book list with wrong    parameters {book}", JsonConvert.SerializeObject(book));
-                return ValidationProblem(ModelState);
-            }
-
-            Book model = new Book()
-            {
-                Title = book.Pavadinimas,
-                Author = book.Autorius,
-                Cover = Enum.Parse<ECoverType>(book.KnygosTipas),
-                PublishYear = book.Isleista.Year,
+                MaxBorrowingDays = measure.SkolosTrukmeDienomis,
+                MaxOverdueBooks = measure.NegrazintuKnyguSkaicius,
+                MaxBooksOnHand = measure.IsduotuKnyguSkaicius,
+                MinBorrowingFee = measure.MinimaliSkolosSuma,
+                MaxBorrowingFee = measure.MaksimaliSkolosSuma,
             };
 
-            await _bookRepo.CreateAsync(model);
+            await _measureRepo.CreateAsync(model);
 
-            return CreatedAtRoute("filter", new { id = model.Id }, book);
+            return Created("PostMeasure", new { id = model.Id });
         }
 
 

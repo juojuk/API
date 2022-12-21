@@ -41,7 +41,28 @@ namespace BookApiTests
             var expected = false;
 
             Assert.AreEqual(actual, expected);
+        }
+
+        [TestMethod]
+        public void PostMeasureTest()
+        {
+            var measureRepoMock = new Mock<IMeasureRepository>();
+
+            var fakeMeasure = new API_mokymai.Models.Measure
+            {
+                Id = 1,
+                MaxBorrowingDays = 28,
+                MaxOverdueBooks = 2,
+                MaxBooksOnHand = 5,
+                MinBorrowingFee = 10,
+                MaxBorrowingFee = 50,
+            };
+            //measureRepoMock.Setup(r => r.GetAsync(m => m.Id == It.IsAny<Measure>().Id, true));
+            var expected = measureRepoMock.Object.CreateAsync(fakeMeasure);
+            measureRepoMock.Verify(r => r.ExistAsync(m => m.Id == fakeMeasure.Id), Times.Once);
+            Assert.AreEqual(expected.IsCompleted, true);
 
         }
+
     }
 }
