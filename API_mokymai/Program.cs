@@ -44,6 +44,7 @@ namespace API_mokymai
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IMeasureRepository, MeasureRepository>();
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+            builder.Services.AddScoped<IPersonRepository, PersonRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
             builder.Services.AddScoped<IJwtService, JwtService>();

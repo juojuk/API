@@ -21,16 +21,18 @@ namespace API_mokymai.Controllers
         private readonly IBookRepository _bookRepo;
         private readonly IMeasureRepository _measureRepo;
         private readonly IReservationRepository _reservationRepo;
+        private readonly IPersonRepository _personRepo;
         private readonly IBookWrapper _bookWrapper;
         private readonly ILogger<BookController> _logger;
 
-        public BookController(BookContext db, IBookManager bookManager, IBookRepository bookRepo, IMeasureRepository measureRepo, IReservationRepository reservationRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
+        public BookController(BookContext db, IBookManager bookManager, IBookRepository bookRepo, IMeasureRepository measureRepo, IReservationRepository reservationRepo, IPersonRepository personRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
         {
             _db = db;
             _bookManager = bookManager;
             _bookRepo = bookRepo;
             _measureRepo = measureRepo;
             _reservationRepo = reservationRepo;
+            _personRepo = personRepo;
             _bookWrapper = bookWrapper;
             _logger = logger;
         }
@@ -242,6 +244,7 @@ namespace API_mokymai.Controllers
         /// </summary>
         /// <param name="reservation"></param>
         /// <returns></returns>
+        /// <response code="400"></response>
         /// <response code="401">Neautorizuotas vartotojas</response>
         [HttpPost("reservation", Name = "PostReservation")]
         //[Authorize(Roles = "editor")]
@@ -251,56 +254,60 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> Post([FromQuery]CreateReservationDto reservation)
+        public async Task<IActionResult> Post(CreateReservationDto reservation)
         {
             var book = await _bookRepo.GetAsync(b => b.Id == reservation.KnygosId);
-            var user = await _db.Persons.FirstAsync(b => b.Id == reservation.VartotojoId);
+            var user = await _personRepo.GetAsync(p => p.Id == reservation.VartotojoId);
             var measureList = await _measureRepo.GetAllAsync();
-
-
-            if (book.Id.GetType() != typeof(System.Int32))
-            {
-                _logger.LogInformation("Bad type of Book id {book.Id}", book.Id);
-                return BadRequest();
-            }
-            
-            if (user.Id.GetType() != typeof(System.Int32))
-            {
-                _logger.LogInformation("Bad type of User id {user.Id}", user.Id);
-                return BadRequest();
-            }
-
-            var reservationsByBookId = await _reservationRepo.GetAllAsync(b => b.BookId == book.Id);
-
-            var isAvailableBook = _bookManager.IsAvailableBook(book, reservationsByBookId);
-
-            if (!isAvailableBook)
-            {
-                _logger.LogInformation("Book id {book.Id} reservation is not available", book.Id);
-                return BadRequest(ModelState);
-            }
-
-            var reservationsByPersonId = await _reservationRepo.GetAllAsync(b => b.PersonId == user.Id);
-
-            var isAvailableReservation = _bookManager.IsAvailableReservation(measureList, reservationsByPersonId);
-
-
-            if (!isAvailableReservation)
-            {
-                _logger.LogInformation("Reservation of books is not allowed");
-                return BadRequest("Reservation of books is not allowed");
-            }
-
-            if (ModelState.IsValid)
-            {
-                return ValidationProblem(ModelState);
-            }
 
 
             if (book == null)
             {
-                _logger.LogInformation("Book with id {book.Id} not found", book.Id);
-                return NotFound();
+                _logger.LogInformation("Bad Book id {reservation.KnygosId}", reservation.KnygosId);
+                var validValues = _bookRepo.GetAllAsync().Result.Select(i => i.Id).ToArray();
+                ModelState.AddModelError(nameof(reservation.KnygosId), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
+            }
+
+            if (user == null)
+            {
+                _logger.LogInformation("Bad type of User id {user.Id}", reservation.VartotojoId);
+                var validValues = _personRepo.GetAllAsync().Result.Select(i => i.Id).ToArray();
+                ModelState.AddModelError(nameof(reservation.VartotojoId), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
+            }
+
+            if (book != null)
+            {
+                var reservationsByBookId = await _reservationRepo.GetAllAsync(b => b.BookId == book.Id);
+                var isAvailableBook = _bookManager.IsAvailableBook(book, reservationsByBookId);
+
+                if (!isAvailableBook)
+                {
+                    _logger.LogInformation("Book id {book.Id} reservation is not available", book.Id);
+                    ModelState.AddModelError(nameof(isAvailableBook), $"Book id {book.Id} reservation is not available");
+                }
+            }
+
+            if (user != null)
+            {
+                var reservationsByPersonId = await _reservationRepo.GetAllAsync(b => b.PersonId == user.Id);
+                var isAvailableReservation = _bookManager.IsAvailableReservation(measureList, reservationsByPersonId);
+                
+                if (!isAvailableReservation)
+                {
+                    _logger.LogInformation("Reservation of books is not allowed");
+                    ModelState.AddModelError(nameof(isAvailableReservation), "Reservation of books is not allowed");
+                }
+            }
+
+            if (measureList == null)
+            {
+                _logger.LogInformation("List of measures is empty");
+                ModelState.AddModelError(nameof(measureList), "List of measures is empty");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
             }
 
             var activeMeasureId = _bookManager.GetActiveMeasureId(measureList);
