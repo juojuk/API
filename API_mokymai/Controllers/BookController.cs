@@ -16,16 +16,17 @@ namespace API_mokymai.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
+        private readonly BookContext _db;
         private readonly IBookManager _bookManager;
-        //private readonly BookContext _db;
         private readonly IBookRepository _bookRepo;
         private readonly IMeasureRepository _measureRepo;
         private readonly IReservationRepository _reservationRepo;
         private readonly IBookWrapper _bookWrapper;
         private readonly ILogger<BookController> _logger;
 
-        public BookController(IBookManager bookManager, IBookRepository bookRepo, IMeasureRepository measureRepo, IReservationRepository reservationRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
+        public BookController(BookContext db, IBookManager bookManager, IBookRepository bookRepo, IMeasureRepository measureRepo, IReservationRepository reservationRepo, IBookWrapper bookWrapper, ILogger<BookController> logger)
         {
+            _db = db;
             _bookManager = bookManager;
             _bookRepo = bookRepo;
             _measureRepo = measureRepo;
@@ -176,7 +177,7 @@ namespace API_mokymai.Controllers
         /// <param name="book"></param>
         /// <returns></returns>
         /// <response code="400">paduodamos informacijos validacijos klaidos </response>
-        [HttpPost("book")]
+        [HttpPost("newbook")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GetBookDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -221,6 +222,7 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateMeasureDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
@@ -228,19 +230,64 @@ namespace API_mokymai.Controllers
         {
             _logger.LogInformation("Getting measure with wrong parameters {measure}", JsonConvert.SerializeObject(measure));
 
-            Measure model = new Measure()
-            {
-                MaxBorrowingDays = measure.SkolosTrukmeDienomis,
-                MaxOverdueBooks = measure.NegrazintuKnyguSkaicius,
-                MaxBooksOnHand = measure.IsduotuKnyguSkaicius,
-                MinBorrowingFee = measure.MinimaliSkolosSuma,
-                MaxBorrowingFee = measure.MaksimaliSkolosSuma,
-            };
+            var model = _bookWrapper.Bind(measure);
 
             await _measureRepo.CreateAsync(model);
 
             return Created("PostMeasure", new { id = model.Id });
         }
+
+        [HttpPost("reservation")]
+        //[Authorize(Roles = "editor")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateReservationDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> Post([FromQuery]CreateReservationDto reservation)
+        {
+            var book = await _bookRepo.GetAsync(b => b.Id == reservation.KnygosId);
+            var user = await _db.Persons.FirstAsync(b => b.Id == reservation.VartotojoId);
+
+            if (book.Id.GetType() != typeof(System.Int32))
+            {
+                _logger.LogInformation("Bad type of Book id {book.Id}", book.Id);
+                return BadRequest();
+            }
+            else if (user.Id.GetType() != typeof(System.Int32))
+            {
+                _logger.LogInformation("Bad type of User id {user.Id}", user.Id);
+                return BadRequest();
+            }
+
+            var reservations = await _reservationRepo.GetAllAsync(b => b.Id == book.Id);
+
+            var isAvailableBook = _bookManager.IsAvailableBook(book, reservations);
+
+            if (!isAvailableBook)
+            {
+                _logger.LogInformation("Book id {book.Id} reservation is not available", book.Id);
+                return BadRequest();
+            }
+
+            if (book == null)
+            {
+                _logger.LogInformation("Book with id {book.Id} not found", book.Id);
+                return NotFound();
+            }
+
+            var measureList = await _measureRepo.GetAllAsync();
+
+            var activeMeasureId = _bookManager.GetActiveMeasureId(measureList);
+
+            var model = _bookWrapper.Bind(reservation, activeMeasureId);
+
+            await _reservationRepo.CreateAsync(model);
+
+            return Created("PostReservation", new { id = model.Id });
+        }
+
 
 
         /// <summary>

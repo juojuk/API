@@ -48,8 +48,19 @@ namespace API_mokymai.Services
                 MaxOverdueBooks = measure.NegrazintuKnyguSkaicius,
                 MaxBooksOnHand = measure.IsduotuKnyguSkaicius,
                 MinBorrowingFee = measure.MinimaliSkolosSuma,
-                MaxBorrowingFee = measure.MaksimaliSkolosSuma
+                MaxBorrowingFee = measure.MaksimaliSkolosSuma,
             };
         }
+
+        public Reservation Bind(CreateReservationDto reservation, int measureId)
+        {
+            return new Reservation()
+            {
+                PersonId = reservation.VartotojoId,
+                BookId = reservation.KnygosId,
+                MeasureId = measureId,
+            };
+        }
+
     }
 }

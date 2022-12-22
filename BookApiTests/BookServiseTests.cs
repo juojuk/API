@@ -57,10 +57,14 @@ namespace BookApiTests
                 MinBorrowingFee = 10,
                 MaxBorrowingFee = 50,
             };
+            //measureRepoMock.Setup(r => r.CreateAsync(fakeMeasure));
+            //measureRepoMock.Object.CreateAsync();
             //measureRepoMock.Setup(r => r.GetAsync(m => m.Id == It.IsAny<Measure>().Id, true));
-            var expected = measureRepoMock.Object.CreateAsync(fakeMeasure);
-            measureRepoMock.Verify(r => r.ExistAsync(m => m.Id == fakeMeasure.Id), Times.Once);
-            Assert.AreEqual(expected.IsCompleted, true);
+            //var expected = measureRepoMock.Object.CreateAsync(fakeMeasure);
+            //measureRepoMock.Verify(r => r.ExistAsync(m => m.Id == fakeMeasure.Id));
+            //measureRepoMock.Verify(r => r.CreateAsync(fakeMeasure), Times.Once);
+            //var actual = measureRepoMock.Object.GetAsync(m => m.Id == 1).Result;
+            //Assert.AreEqual(expected, 1);
 
         }
 

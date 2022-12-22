@@ -9,6 +9,17 @@ namespace API_mokymai.Services
 {
     public class BookManager : IBookManager
     {
+        public int GetActiveMeasureId(List<Measure> measures)
+        {
+            return measures.Last().Id;
+        }
+
+        public bool IsAvailableBook(Book book, List<Reservation> reservations)
+        {
+            return book.Quantity > reservations.Count(b => b.ReturnDateTime == null && b.BookId == book.Id) ? true : false;
+        }
+
+
         //{
         //    public BookManager(IBookSet context, IBookWrapper wrapper)
 
@@ -41,9 +52,5 @@ namespace API_mokymai.Services
         //        //return _context.Books.FirstOrDefault(i => i.Id == id);
         //        return _context.Books.Any(i => i.Id == id);
         //    }
-        public bool IsAvailableBook(Book book, List<Reservation> reservations)
-        {
-            return book.Quantity > reservations.Count(b => b.ReturnDateTime == null && b.BookId == book.Id) ? true : false ;
-        }
     }
 }

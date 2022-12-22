@@ -4,6 +4,11 @@ namespace API_mokymai.Models
 {
     public class Reservation
     {
+
+        public Reservation()
+        {
+        }
+
         public Reservation(int id, DateTime checkOutDateTime, DateTime? returnDateTime, int personId, int bookId, int measureId)
         {
             Id = id;
@@ -15,8 +20,8 @@ namespace API_mokymai.Models
         }
 
         public int Id { get; set; }
-        public DateTime CheckOutDateTime { get; set; }
-        public DateTime? ReturnDateTime { get; set; }
+        public DateTime CheckOutDateTime { get; set; } = DateTime.Now;
+        public DateTime? ReturnDateTime { get; set; } = null;
         public int PersonId { get; set; }
         public int BookId { get; set; }
         public int MeasureId { get; set; }
