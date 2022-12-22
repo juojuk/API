@@ -40,7 +40,33 @@ namespace BookApiTests
             var actual = sut.IsAvailableBook(fakeBook, fakeReservations);
             var expected = false;
 
-            Assert.AreEqual(actual, expected);
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void CanBorrowingTest()
+        {
+            var fakeReservations = new List<Reservation>()
+            {
+                new Reservation(1, new DateTime(2020, 1, 1), new DateTime(2020, 6, 1), 4, 1, 1),
+                new Reservation(2, new DateTime(2020, 2, 1), new DateTime(2020, 6, 1), 4, 2, 1),
+                new Reservation(3, new DateTime(2020, 3, 1), null, 4, 3, 1),
+                new Reservation(4, new DateTime(2020, 4, 1), null, 4, 4, 1),
+                new Reservation(5, new DateTime(2020, 5, 1), null, 4, 5, 1),
+                new Reservation(6, new DateTime(2020, 6, 1), null, 4, 6, 2),
+            };
+
+            var fakeMeasures = new List<Measure>()
+            {
+                new API_mokymai.Models.Measure{Id = 1, MaxBorrowingDays = 28, MaxOverdueBooks = 2, MaxBooksOnHand = 5, MinBorrowingFee = 10, MaxBorrowingFee = 50 },
+                new API_mokymai.Models.Measure{Id = 2, MaxBorrowingDays = 28, MaxOverdueBooks = 2, MaxBooksOnHand = 5, MinBorrowingFee = 10, MaxBorrowingFee = 50 },
+            };
+
+            var sut = new BookManager();
+            var actual = sut.IsAvailableReservation(fakeMeasures, fakeReservations);
+            var expected = true;
+
+            Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using API_mokymai.Models.Dto;
 using API_mokymai.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
+using System.Net.Mime;
 
 namespace API_mokymai.Controllers
 {
@@ -30,6 +32,12 @@ namespace API_mokymai.Controllers
         }
 
         [HttpPost("register")]
+        //[Authorize(Roles = "admin")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(RegistrationRequest))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces(MediaTypeNames.Application.Json)]
+
         public async Task<IActionResult> RegisterAsync([FromBody] RegistrationRequest model)
         {
             var isUserNameUnique = await _userRepo.IsUniqueUserAsync(model.Email);

@@ -237,7 +237,13 @@ namespace API_mokymai.Controllers
             return Created("PostMeasure", new { id = model.Id });
         }
 
-        [HttpPost("reservation")]
+        /// <summary>
+        /// Vykdomas knygu isdavimas
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
+        /// <response code="401">Neautorizuotas vartotojas</response>
+        [HttpPost("reservation", Name = "PostReservation")]
         //[Authorize(Roles = "editor")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateReservationDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -249,27 +255,47 @@ namespace API_mokymai.Controllers
         {
             var book = await _bookRepo.GetAsync(b => b.Id == reservation.KnygosId);
             var user = await _db.Persons.FirstAsync(b => b.Id == reservation.VartotojoId);
+            var measureList = await _measureRepo.GetAllAsync();
+
 
             if (book.Id.GetType() != typeof(System.Int32))
             {
                 _logger.LogInformation("Bad type of Book id {book.Id}", book.Id);
                 return BadRequest();
             }
-            else if (user.Id.GetType() != typeof(System.Int32))
+            
+            if (user.Id.GetType() != typeof(System.Int32))
             {
                 _logger.LogInformation("Bad type of User id {user.Id}", user.Id);
                 return BadRequest();
             }
 
-            var reservations = await _reservationRepo.GetAllAsync(b => b.Id == book.Id);
+            var reservationsByBookId = await _reservationRepo.GetAllAsync(b => b.BookId == book.Id);
 
-            var isAvailableBook = _bookManager.IsAvailableBook(book, reservations);
+            var isAvailableBook = _bookManager.IsAvailableBook(book, reservationsByBookId);
 
             if (!isAvailableBook)
             {
                 _logger.LogInformation("Book id {book.Id} reservation is not available", book.Id);
-                return BadRequest();
+                return BadRequest(ModelState);
             }
+
+            var reservationsByPersonId = await _reservationRepo.GetAllAsync(b => b.PersonId == user.Id);
+
+            var isAvailableReservation = _bookManager.IsAvailableReservation(measureList, reservationsByPersonId);
+
+
+            if (!isAvailableReservation)
+            {
+                _logger.LogInformation("Reservation of books is not allowed");
+                return BadRequest("Reservation of books is not allowed");
+            }
+
+            if (ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
 
             if (book == null)
             {
@@ -277,15 +303,13 @@ namespace API_mokymai.Controllers
                 return NotFound();
             }
 
-            var measureList = await _measureRepo.GetAllAsync();
-
             var activeMeasureId = _bookManager.GetActiveMeasureId(measureList);
 
             var model = _bookWrapper.Bind(reservation, activeMeasureId);
 
             await _reservationRepo.CreateAsync(model);
 
-            return Created("PostReservation", new { id = model.Id });
+            return CreatedAtRoute("PostReservation", new { id = model.Id }, reservation);
         }
 
 

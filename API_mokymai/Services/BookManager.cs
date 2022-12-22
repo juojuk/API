@@ -19,6 +19,13 @@ namespace API_mokymai.Services
             return book.Quantity > reservations.Count(b => b.ReturnDateTime == null && b.BookId == book.Id) ? true : false;
         }
 
+        public bool IsAvailableReservation(List<Measure> measures, List<Reservation> reservations)
+        {
+            var activeMeasure = measures.Last();
+            return activeMeasure.MaxBooksOnHand > reservations.Count(b => b.ReturnDateTime == null) ? true : false;
+        }
+
+
 
         //{
         //    public BookManager(IBookSet context, IBookWrapper wrapper)
