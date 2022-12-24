@@ -7,5 +7,6 @@
         public int IsduotuKnyguSkaicius { get; set; }
         public decimal MinimaliSkolosSuma { get; set; }
         public decimal MaksimaliSkolosSuma { get; set; }
+        public decimal SkolosKoeficientas { get; set; }
     }
 }
