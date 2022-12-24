@@ -4,7 +4,6 @@ namespace API_mokymai.Models
 {
     public class Reservation
     {
-
         public Reservation()
         {
         }

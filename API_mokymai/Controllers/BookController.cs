@@ -220,7 +220,7 @@ namespace API_mokymai.Controllers
         /// <response code="401">Neautorizuotas vartotojas</response>
 
         [HttpPost("measure")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateMeasureDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -258,7 +258,7 @@ namespace API_mokymai.Controllers
         {
             var book = await _bookRepo.GetAsync(b => b.Id == reservation.KnygosId);
             var user = await _personRepo.GetAsync(p => p.Id == reservation.VartotojoId);
-            var measureList = await _measureRepo.GetAllAsync();
+            var measures = await _measureRepo.GetAllAsync();
 
 
             if (book == null)
@@ -290,7 +290,7 @@ namespace API_mokymai.Controllers
             if (user != null)
             {
                 var reservationsByPersonId = await _reservationRepo.GetAllAsync(b => b.PersonId == user.Id);
-                var isAvailableReservation = _bookManager.IsAvailableReservation(measureList, reservationsByPersonId);
+                var isAvailableReservation = _bookManager.IsAvailableReservation(measures, reservationsByPersonId);
                 
                 if (!isAvailableReservation)
                 {
@@ -299,10 +299,10 @@ namespace API_mokymai.Controllers
                 }
             }
 
-            if (measureList == null)
+            if (measures == null)
             {
                 _logger.LogInformation("List of measures is empty");
-                ModelState.AddModelError(nameof(measureList), "List of measures is empty");
+                ModelState.AddModelError(nameof(measures), "List of measures is empty");
             }
 
             if (!ModelState.IsValid)
@@ -310,9 +310,7 @@ namespace API_mokymai.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            var activeMeasureId = _bookManager.GetActiveMeasureId(measureList);
-
-            var model = _bookWrapper.Bind(reservation, activeMeasureId);
+            var model = _bookWrapper.Bind(reservation, measures.Last().Id);
 
             await _reservationRepo.CreateAsync(model);
 

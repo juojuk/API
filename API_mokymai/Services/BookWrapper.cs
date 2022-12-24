@@ -49,6 +49,7 @@ namespace API_mokymai.Services
                 MaxBooksOnHand = measure.IsduotuKnyguSkaicius,
                 MinBorrowingFee = measure.MinimaliSkolosSuma,
                 MaxBorrowingFee = measure.MaksimaliSkolosSuma,
+                BorrowingFeeRatio = measure.SkolosKoeficientas,
             };
         }
 
