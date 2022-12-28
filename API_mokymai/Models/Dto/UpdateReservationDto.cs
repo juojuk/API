@@ -8,5 +8,6 @@
         public int VartotojoId { get; set; }
         public int KnygosId { get; set; }
         public int MeasureId { get; set; }
+        public bool SkolosStatusas { get; set; }
     }
 }

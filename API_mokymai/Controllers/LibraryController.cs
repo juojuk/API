@@ -149,29 +149,48 @@ namespace API_mokymai.Controllers
         /// </summary>
         /// <returns>Filtered books in DB</returns>
 
-        [HttpGet("book/filter")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetBookDto>))]
+        //[HttpGet("book/filter")]
+        //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetBookDto>))]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Produces(MediaTypeNames.Application.Json)]
+        //public async Task<ActionResult<List<GetBookDto>>> Filter([FromQuery]FilterBookRequest req)
+        //{
+        //    _logger.LogInformation("Getting book list with parameters {req}", JsonConvert.SerializeObject(req));
+
+        //    IEnumerable<Book> entities = await _bookRepo.GetAllAsync();
+
+        //    if (req.Pavadinimas != null)
+        //        entities = entities.Where(x => x.Title == req.Pavadinimas);
+
+        //    if (req.Autorius != null)
+        //        entities = entities.Where(x => x.Author == req.Autorius);
+
+        //    if (req.KnygosTipas != null)
+        //        entities = entities.Where(x => x.Cover == Enum.Parse<ECoverType>(req.KnygosTipas));
+
+        //    var model = entities?.Select(x => _bookWrapper.Bind(x));
+
+        //    return Ok(model);
+        //}
+
+        /// <summary>
+        /// Fetches all current reservations by person Id
+        /// </summary>
+        /// <returns>Filtered reservations in DB</returns>
+        [HttpGet("reservations/current")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetReservationDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
-        public async Task<ActionResult<List<GetBookDto>>> Filter([FromQuery]FilterBookRequest req)
+        public async Task<IActionResult> GetCurrentReservations(int id)
         {
-            _logger.LogInformation("Getting book list with parameters {req}", JsonConvert.SerializeObject(req));
-
-            IEnumerable<Book> entities = await _bookRepo.GetAllAsync();
-
-            if (req.Pavadinimas != null)
-                entities = entities.Where(x => x.Title == req.Pavadinimas);
-
-            if (req.Autorius != null)
-                entities = entities.Where(x => x.Author == req.Autorius);
-
-            if (req.KnygosTipas != null)
-                entities = entities.Where(x => x.Cover == Enum.Parse<ECoverType>(req.KnygosTipas));
-
-            var model = entities?.Select(x => _bookWrapper.Bind(x));
-
-            return Ok(model);
+            var reservations = await _reservationRepo.GetAllAsync(r => r.PersonId == id);
+            var currentReservations = _bookManager.GetCurrentReservations(reservations);
+            var currentReservationsDto = currentReservations.Select(r => (GetReservationDto)_bookWrapper.Bind(r, 'G')).ToList();
+            return Ok(currentReservationsDto);
         }
+
+
+
         /// <summary>
         /// Irasoma knyga i duomenu baze
         /// </summary>
@@ -179,6 +198,7 @@ namespace API_mokymai.Controllers
         /// <returns></returns>
         /// <response code="400">paduodamos informacijos validacijos klaidos </response>
         [HttpPost("book/new")]
+        [Authorize(Roles = "1")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GetBookDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -198,17 +218,11 @@ namespace API_mokymai.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            Book model = new Book()
-            {
-                Title = book.Pavadinimas,
-                Author = book.Autorius,
-                Cover = Enum.Parse<ECoverType>(book.KnygosTipas),
-                PublishYear = book.Isleista.Year,
-            };
+            var model = _bookWrapper.Bind(book);
 
             await _bookRepo.CreateAsync(model);
 
-            return CreatedAtRoute("filter", new { id = model.Id }, book);
+            return Created ("book/new", new { id = model.Id });
         }
 
         /// <summary>
@@ -217,9 +231,8 @@ namespace API_mokymai.Controllers
         /// <param name="measure"></param>
         /// <returns></returns>
         /// <response code="401">Neautorizuotas vartotojas</response>
-
         [HttpPost("measure/new")]
-        [Authorize(Roles = "1")]
+        //[Authorize(Roles = "1")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateMeasureDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -246,7 +259,7 @@ namespace API_mokymai.Controllers
         /// <response code="400"></response>
         /// <response code="401">Neautorizuotas vartotojas</response>
         [HttpPost("reservation/new", Name = "PostReservation")]
-        [Authorize(Roles = "2")]
+        //[Authorize(Roles = "2")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateReservationDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -356,7 +369,7 @@ namespace API_mokymai.Controllers
         }
 
         [HttpPatch("book/update/{id:int}", Name = "UpdatePartialBookDto")]
-        [Authorize(Roles = "1")]
+        //[Authorize(Roles = "1")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -423,7 +436,7 @@ namespace API_mokymai.Controllers
                 return NotFound();
             }
 
-            var reservationDto = _bookWrapper.Bind(gotReservation);
+            var reservationDto = (UpdateReservationDto)_bookWrapper.Bind(gotReservation, 'U');
 
             //request.ApplyTo(bookDto, ModelState);
             request.ApplyTo(reservationDto);

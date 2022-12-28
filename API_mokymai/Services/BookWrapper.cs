@@ -12,7 +12,7 @@ namespace API_mokymai.Services
             return new GetBookDto() 
             { 
                 Id = book.Id, 
-                PavadinimasIrAutorius = $"{ book.Cover } { book.Author }",
+                PavadinimasIrAutorius = $"{ book.Title } { book.Author }",
                 LeidybosMetai = book.PublishYear
             };
 
@@ -26,7 +26,7 @@ namespace API_mokymai.Services
                     return new GetBookDto()
                     {
                         Id = book.Id,
-                        PavadinimasIrAutorius = $"{book.Cover} {book.Author}",
+                        PavadinimasIrAutorius = $"{book.Title} {book.Author}",
                         LeidybosMetai = book.PublishYear
                     };
                 case 'U':
@@ -93,17 +93,30 @@ namespace API_mokymai.Services
             };
         }
 
-        public UpdateReservationDto Bind(Reservation reservation)
+        public Object? Bind(Reservation reservation, char c)
         {
-            return new UpdateReservationDto()
+            switch (c)
             {
-                Id = reservation.Id,
-                IsdavimoData = reservation.CheckOutDateTime,
-                GrazinimoData = reservation.ReturnDateTime,
-                VartotojoId = reservation.PersonId,
-                KnygosId = reservation.BookId,
-                MeasureId = reservation.MeasureId,
-            };
+                case 'G':
+                    return new GetReservationDto()
+                    {
+                        IsdavimoData = reservation.CheckOutDateTime.ToShortDateString(),
+                        PavadinimasIrAutorius = $"{reservation.Book.Title} {reservation.Book.Author}" 
+                    };
+                case 'U':
+                    return new UpdateReservationDto()
+                    {
+                        Id = reservation.Id,
+                        IsdavimoData = reservation.CheckOutDateTime,
+                        GrazinimoData = reservation.ReturnDateTime,
+                        VartotojoId = reservation.PersonId,
+                        KnygosId = reservation.BookId,
+                        MeasureId = reservation.MeasureId,
+                        SkolosStatusas = reservation.ReservationStatus,
+                    };
+                default:
+                    return null;
+            }
         }
 
         public Reservation Bind(UpdateReservationDto reservation)
@@ -116,6 +129,7 @@ namespace API_mokymai.Services
                 PersonId = reservation.VartotojoId,
                 BookId = reservation.KnygosId,
                 MeasureId = reservation.MeasureId,
+                ReservationStatus = reservation.SkolosStatusas,
             };
         }
     }

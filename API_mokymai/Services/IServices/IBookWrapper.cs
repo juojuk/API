@@ -11,7 +11,7 @@ namespace API_mokymai.Services.IServices
         Measure Bind(CreateMeasureDto measure);
         Reservation Bind(CreateReservationDto reservation, int measureId);
         Book Bind(UpdateBookDto book);
-        public UpdateReservationDto Bind(Reservation reservation);
+        Object? Bind(Reservation reservation, char c);
         public Reservation Bind(UpdateReservationDto reservation);
 
     }

@@ -9,6 +9,7 @@ namespace API_mokymai.Services.IServices
         bool IsAvailableReservation(List<Measure> measures, List<Reservation> reservations);
         int GetNumberOfBooksOnHand(List<Reservation> reservations);
         int GetNumberOfOverDueBooks(List<Reservation> reservations);
-        decimal GetBorrowingFee(List<Reservation> reservations);
+        decimal GetBorrowingFee(List<Measure> measures, List<Reservation> reservations);
+        List<Reservation> GetCurrentReservations(List<Reservation> reservations);
     }
 }

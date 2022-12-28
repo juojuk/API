@@ -44,7 +44,7 @@ namespace API_mokymai.Repository
             var inputPasswordBytes = Encoding.UTF8.GetBytes(loginRequest.Password);
             var user = await _db.Persons.FirstOrDefaultAsync(x => x.Email.ToLower() == loginRequest.Email.ToLower());
 
-            if (user == null && !_passwordService.VerifyPasswordHash(loginRequest.Password, user.PasswordHash, user.PasswordSalt))
+            if (user == null || !_passwordService.VerifyPasswordHash(loginRequest.Password, user.PasswordHash, user.PasswordSalt))
             {
                 return new LoginResponse
                 {

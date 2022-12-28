@@ -1,13 +1,10 @@
 using API_mokymai.Data;
 using API_mokymai.Models;
-using API_mokymai.Repository;
+using API_mokymai.Models.Dto;
 using API_mokymai.Repository.IRepository;
 using API_mokymai.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace BookApiTests
 {
@@ -56,18 +53,20 @@ namespace BookApiTests
                     MaxBooksOnHand = 5,
                     MinBorrowingFee = 10,
                     MaxBorrowingFee = 50,
+                    BorrowingFeeRatio = 0.2m,
                 }
             };
-        
 
-        var fakeReservations = new List<Reservation>()
+
+            var fakeReservations = new List<Reservation>()
             {
-                new Reservation{Id = 1, CheckOutDateTime = new DateTime(2020, 1, 1), ReturnDateTime = new DateTime(2020, 6, 1), PersonId = 4, BookId = 1, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 2, CheckOutDateTime = new DateTime(2020, 2, 1), ReturnDateTime = new DateTime(2020, 6, 1), PersonId = 4, BookId = 2, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 3, CheckOutDateTime = new DateTime(2020, 3, 1), ReturnDateTime = null, PersonId = 4, BookId = 3, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 4, CheckOutDateTime = new DateTime(2020, 4, 1), ReturnDateTime = null, PersonId = 4, BookId = 4, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 5, CheckOutDateTime = new DateTime(2020, 5, 1), ReturnDateTime = null, PersonId = 4, BookId = 5, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 6, CheckOutDateTime = new DateTime(2020, 6, 1), ReturnDateTime = null, PersonId = 4, BookId = 6, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
+                new Reservation{Id = 1, CheckOutDateTime = new DateTime(2020, 1, 3), ReturnDateTime = new DateTime(2020, 2, 29), PersonId = 4, BookId = 1, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 2, CheckOutDateTime = new DateTime(2020, 2, 1), ReturnDateTime = new DateTime(2020, 3, 31), PersonId = 4, BookId = 2, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = false },
+                new Reservation{Id = 3, CheckOutDateTime = new DateTime(2020, 3, 1), ReturnDateTime = null, PersonId = 4, BookId = 3, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 4, CheckOutDateTime = new DateTime(2020, 4, 1), ReturnDateTime = null, PersonId = 4, BookId = 4, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                //new Reservation{Id = 5, CheckOutDateTime = new DateTime(2020, 5, 1), ReturnDateTime = null, PersonId = 4, BookId = 5, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                //new Reservation{Id = 6, CheckOutDateTime = new DateTime(2020, 6, 1), ReturnDateTime = null, PersonId = 4, BookId = 6, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                //new Reservation{Id = 7, CheckOutDateTime = new DateTime(2020, 7, 1), ReturnDateTime = null, PersonId = 4, BookId = 6, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
             };
 
             var sut = new BookManager();
@@ -95,12 +94,12 @@ namespace BookApiTests
 
             var fakeReservations = new List<Reservation>()
             {
-                new Reservation{Id = 1, CheckOutDateTime = new DateTime(2020, 1, 1), ReturnDateTime = new DateTime(2020, 6, 1), PersonId = 4, BookId = 1, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 2, CheckOutDateTime = new DateTime(2020, 2, 1), ReturnDateTime = new DateTime(2020, 6, 1), PersonId = 4, BookId = 2, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 3, CheckOutDateTime = new DateTime(2020, 3, 1), ReturnDateTime = null, PersonId = 4, BookId = 3, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 4, CheckOutDateTime = new DateTime(2020, 4, 1), ReturnDateTime = null, PersonId = 4, BookId = 4, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 5, CheckOutDateTime = new DateTime(2020, 5, 1), ReturnDateTime = null, PersonId = 4, BookId = 5, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 6, CheckOutDateTime = new DateTime(2020, 6, 1), ReturnDateTime = null, PersonId = 4, BookId = 6, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
+                new Reservation{Id = 1, CheckOutDateTime = new DateTime(2020, 1, 1), ReturnDateTime = new DateTime(2020, 6, 1), PersonId = 4, BookId = 1, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 2, CheckOutDateTime = new DateTime(2020, 2, 1), ReturnDateTime = new DateTime(2020, 6, 1), PersonId = 4, BookId = 2, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 3, CheckOutDateTime = new DateTime(2020, 3, 1), ReturnDateTime = null, PersonId = 4, BookId = 3, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 4, CheckOutDateTime = new DateTime(2020, 4, 1), ReturnDateTime = null, PersonId = 4, BookId = 4, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 5, CheckOutDateTime = new DateTime(2020, 5, 1), ReturnDateTime = null, PersonId = 4, BookId = 5, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 6, CheckOutDateTime = new DateTime(2020, 6, 1), ReturnDateTime = null, PersonId = 4, BookId = 6, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
             };
 
             var sut = new BookManager();
@@ -130,12 +129,12 @@ namespace BookApiTests
 
             var fakeReservations = new List<Reservation>()
             {
-                new Reservation{Id = 1, CheckOutDateTime = new DateTime(2022, 1, 1), ReturnDateTime = new DateTime(2022, 1, 31), PersonId = 4, BookId = 1, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 2, CheckOutDateTime = new DateTime(2022, 2, 1), ReturnDateTime = new DateTime(2022, 2, 28), PersonId = 4, BookId = 2, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 3, CheckOutDateTime = new DateTime(2022, 11, 1), ReturnDateTime = null, PersonId = 4, BookId = 3, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 4, CheckOutDateTime = new DateTime(2022, 11, 1), ReturnDateTime = null, PersonId = 4, BookId = 4, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 5, CheckOutDateTime = new DateTime(2022, 12, 1), ReturnDateTime = null, PersonId = 4, BookId = 5, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 6, CheckOutDateTime = new DateTime(2022, 12, 1), ReturnDateTime = null, PersonId = 4, BookId = 6, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
+                new Reservation{Id = 1, CheckOutDateTime = new DateTime(2022, 1, 1), ReturnDateTime = new DateTime(2022, 1, 31), PersonId = 4, BookId = 1, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 2, CheckOutDateTime = new DateTime(2022, 2, 1), ReturnDateTime = new DateTime(2022, 2, 28), PersonId = 4, BookId = 2, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 3, CheckOutDateTime = new DateTime(2022, 11, 1), ReturnDateTime = null, PersonId = 4, BookId = 3, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 4, CheckOutDateTime = new DateTime(2022, 11, 1), ReturnDateTime = null, PersonId = 4, BookId = 4, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 5, CheckOutDateTime = new DateTime(2022, 12, 1), ReturnDateTime = null, PersonId = 4, BookId = 5, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 6, CheckOutDateTime = new DateTime(2022, 12, 1), ReturnDateTime = null, PersonId = 4, BookId = 6, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
             };
 
             var sut = new BookManager();
@@ -158,7 +157,7 @@ namespace BookApiTests
                     MaxBooksOnHand = 5,
                     MinBorrowingFee = 10,
                     MaxBorrowingFee = 50,
-                    BorrowingFeeRatio = 0.0m,
+                    BorrowingFeeRatio = 0.2m,
                 },
                 new Measure()
                 {
@@ -175,22 +174,36 @@ namespace BookApiTests
 
             var fakeReservations = new List<Reservation>()
             {
-                new Reservation{Id = 1, CheckOutDateTime = new DateTime(2022, 1, 1), ReturnDateTime = new DateTime(2022, 1, 31), PersonId = 4, BookId = 1, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 2, CheckOutDateTime = new DateTime(2022, 2, 1), ReturnDateTime = new DateTime(2022, 2, 28), PersonId = 4, BookId = 2, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 3, CheckOutDateTime = new DateTime(2022, 11, 1), ReturnDateTime = new DateTime(2022, 11, 15), PersonId = 4, BookId = 3, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 4, CheckOutDateTime = new DateTime(2022, 11, 1), ReturnDateTime = new DateTime(2022, 11, 15), PersonId = 4, BookId = 4, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1) },
-                new Reservation{Id = 5, CheckOutDateTime = new DateTime(2022, 12, 1), ReturnDateTime = null, PersonId = 4, BookId = 5, MeasureId = 2, Measure = fakeMeasures.Find(m => m.Id == 2) },
-                new Reservation{Id = 6, CheckOutDateTime = new DateTime(2022, 12, 1), ReturnDateTime = null, PersonId = 4, BookId = 6, MeasureId = 2, Measure = fakeMeasures.Find(m => m.Id == 2) },
+                new Reservation{Id = 1, CheckOutDateTime = new DateTime(2020, 1, 3), ReturnDateTime = new DateTime(2020, 2, 29), PersonId = 4, BookId = 1, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 2, CheckOutDateTime = new DateTime(2020, 2, 1), ReturnDateTime = new DateTime(2020, 3, 31), PersonId = 4, BookId = 2, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 3, CheckOutDateTime = new DateTime(2022, 11, 1), ReturnDateTime = new DateTime(2022, 11, 15), PersonId = 4, BookId = 3, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 4, CheckOutDateTime = new DateTime(2022, 11, 1), ReturnDateTime = new DateTime(2022, 11, 15), PersonId = 4, BookId = 4, MeasureId = 1, Measure = fakeMeasures.Find(m => m.Id == 1), ReservationStatus = true },
+                new Reservation{Id = 5, CheckOutDateTime = new DateTime(2022, 12, 1), ReturnDateTime = null, PersonId = 4, BookId = 5, MeasureId = 2, Measure = fakeMeasures.Find(m => m.Id == 2), ReservationStatus = true },
+                new Reservation{Id = 6, CheckOutDateTime = new DateTime(2022, 12, 1), ReturnDateTime = null, PersonId = 4, BookId = 6, MeasureId = 2, Measure = fakeMeasures.Find(m => m.Id == 2), ReservationStatus = true },
             };
 
             var sut = new BookManager();
-            var actual = sut.GetBorrowingFee(fakeReservations);
-            var expected = 1.6;
+            var actual = sut.GetBorrowingFee(fakeMeasures, fakeReservations);
+            var expected = 50.0m;
 
-            Assert.AreEqual((decimal)expected, actual);
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod()]
+        public void BindBookToUpdateBookDtoTest()
+        {
+            Book book = new Book(1, "Orange", "Spainito", ECoverType.Electronic, 1900, 5);
+            var sut = new BookWrapper();
+            var bookDto = (UpdateBookDto)sut.Bind(book, 'U');
+            var actual = bookDto.Kiekis;
+            var expected = book.Quantity;
+
+            Assert.AreEqual(expected, actual);
+
         }
 
 
+        [TestMethod()]
         public void PostMeasureTest()
         {
             var measureRepoMock = new Mock<IMeasureRepository>();
