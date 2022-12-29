@@ -178,17 +178,42 @@ namespace API_mokymai.Controllers
         /// </summary>
         /// <returns>Filtered reservations in DB</returns>
         [HttpGet("reservations/current")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetReservationDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetCurrentReservationDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> GetCurrentReservations(int id)
+        public async Task<IActionResult> GetCurrentReservations(int personId)
         {
-            var reservations = await _reservationRepo.GetAllAsync(r => r.PersonId == id);
+            var reservations = await _reservationRepo.GetAllAsync(r => r.PersonId == personId);
             var currentReservations = _bookManager.GetCurrentReservations(reservations);
-            var currentReservationsDto = currentReservations.Select(r => (GetReservationDto)_bookWrapper.Bind(r, 'G')).ToList();
-            return Ok(currentReservationsDto);
+            return Ok(currentReservations);
         }
 
+        [HttpGet("reservations/debts")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetDebtStatusDto>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces(MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> GetDebtStatus(int personId)
+        {
+            var reservations = await _reservationRepo.GetAllAsync(r => r.PersonId == personId);
+            var measures = await _measureRepo.GetAllAsync();
+            var currentDebts = _bookManager.GetCurrentDebts(measures, reservations);
+            return Ok(currentDebts);
+        }
+
+        /// <summary>
+        /// Fetches most popular author
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("reservations/popularbookauthor")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces(MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> GetMostPopularAuthor()
+        {
+            var reservations = await _reservationRepo.GetAllAsync();
+            var popularAuthor = _bookManager.GetMostPopularAuthor(reservations);
+            return Ok(popularAuthor);
+        }
 
 
         /// <summary>
@@ -436,7 +461,7 @@ namespace API_mokymai.Controllers
                 return NotFound();
             }
 
-            var reservationDto = (UpdateReservationDto)_bookWrapper.Bind(gotReservation, 'U');
+            var reservationDto = _bookWrapper.Bind(gotReservation);
 
             //request.ApplyTo(bookDto, ModelState);
             request.ApplyTo(reservationDto);

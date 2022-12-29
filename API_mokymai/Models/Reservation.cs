@@ -8,7 +8,7 @@ namespace API_mokymai.Models
         {
         }
 
-        public Reservation(int id, DateTime checkOutDateTime, DateTime? returnDateTime, int personId, int bookId, int measureId, bool reservationStatus)
+        public Reservation(int id, DateTime checkOutDateTime, DateTime? returnDateTime, int personId, int bookId, int measureId, bool debtStatus)
         {
             Id = id;
             CheckOutDateTime = checkOutDateTime;
@@ -16,7 +16,7 @@ namespace API_mokymai.Models
             PersonId = personId;
             BookId = bookId;
             MeasureId = measureId;
-            ReservationStatus = reservationStatus;
+            DebtStatus = debtStatus;
         }
 
         public int Id { get; set; }
@@ -25,7 +25,7 @@ namespace API_mokymai.Models
         public int PersonId { get; set; }
         public int BookId { get; set; }
         public int MeasureId { get; set; }
-        public bool ReservationStatus { get; set; } = true;
+        public bool DebtStatus { get; set; } = true;
         public virtual Person Person { get; set; }
         public virtual Book Book { get; set; }
         public virtual Measure Measure { get; set; }
