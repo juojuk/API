@@ -420,8 +420,8 @@ namespace API_mokymai.Controllers
 
             var bookDto = (UpdateBookDto)_bookWrapper.Bind(gotBook, 'U');
 
-            //request.ApplyTo(bookDto, ModelState);
-            request.ApplyTo(bookDto);
+            request.ApplyTo(bookDto, ModelState);
+            //request.ApplyTo(bookDto);
 
             var book = _bookWrapper.Bind(bookDto);
 
@@ -429,8 +429,8 @@ namespace API_mokymai.Controllers
 
             if (!ModelState.IsValid)
             {
-                //return BadRequest(ModelState);
-                return BadRequest();
+                return BadRequest(ModelState);
+                //return BadRequest();
 
             }
             return NoContent();
@@ -463,8 +463,8 @@ namespace API_mokymai.Controllers
 
             var reservationDto = _bookWrapper.Bind(gotReservation);
 
-            //request.ApplyTo(bookDto, ModelState);
-            request.ApplyTo(reservationDto);
+            request.ApplyTo(reservationDto, ModelState);
+            //request.ApplyTo(reservationDto);
 
             var reservation = _bookWrapper.Bind(reservationDto);
 
@@ -472,8 +472,8 @@ namespace API_mokymai.Controllers
 
             if (!ModelState.IsValid)
             {
-                //return BadRequest(ModelState);
-                return BadRequest();
+                return BadRequest(ModelState);
+                //return BadRequest();
 
             }
             return NoContent();
