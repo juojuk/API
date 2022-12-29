@@ -100,6 +100,13 @@ namespace P04_EF_Applying_To_API
                 });
             });
 
+            builder.Services.AddCors(p => p.AddPolicy("corsfordish", builder =>
+            {
+                builder.WithOrigins("*")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            }));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -109,6 +116,7 @@ namespace P04_EF_Applying_To_API
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("corsfordish");
             app.UseHttpsRedirection();
 
             app.UseAuthentication(); // Order matters
