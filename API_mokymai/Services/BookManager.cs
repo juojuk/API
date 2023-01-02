@@ -11,11 +11,6 @@ namespace API_mokymai.Services
 {
     public class BookManager : IBookManager
     {
-        //public int GetActiveMeasureId(List<Measure> measures)
-        //{
-        //    return measures.Last().Id;
-        //}
-
         public bool IsAvailableBook(Book book, List<Reservation>? reservations)
         {
             return book.Quantity > reservations.Count(b => b.ReturnDateTime == null && b.BookId == book.Id) ? true : false;
@@ -123,6 +118,24 @@ namespace API_mokymai.Services
             }).ToList();
 
             return mostPopularAuthorDto;
+        }
+
+        public bool GetShippingPrice(int distance, decimal baseShippingPrice, List<AdditinionalShippingPrice> additinionalShippingPrices, out decimal? shippingPrice)
+        {
+            var additionalshippingPrice = additinionalShippingPrices.Where(d => d.DistanceKm > distance).OrderBy(d => d.DistanceKm).FirstOrDefault().AdditionalPrice;
+
+            if (additionalshippingPrice.HasValue)
+            {
+                shippingPrice = baseShippingPrice + additionalshippingPrice.Value;
+                return true;
+            }
+            else
+            {
+                shippingPrice = null;
+                return false;
+
+            }
+
         }
 
     }

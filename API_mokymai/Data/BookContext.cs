@@ -18,6 +18,9 @@ namespace API_mokymai.Data
         public DbSet<Person> Persons { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<AdditinionalShippingPrice>  AdditinionalShippingPrices { get; set; }
+        public DbSet<ShippingOrder> ShippingOrders { get; set; }
+
 
 
 
@@ -59,7 +62,6 @@ namespace API_mokymai.Data
                 .WithMany(p => p.Persons)
                 .HasForeignKey(k => k.RoleId)
                 .OnDelete(DeleteBehavior.NoAction);
-
         }
     }
 }

@@ -44,6 +44,8 @@ namespace API_mokymai
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IMeasureRepository, MeasureRepository>();
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+            builder.Services.AddScoped<IShippingOrderRepository, ShippingOrderRepository>();
+            builder.Services.AddScoped<IShippingPriceRepo, ShippingPriceRepo>();
             builder.Services.AddScoped<IPersonRepository, PersonRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
@@ -55,6 +57,21 @@ namespace API_mokymai
                 client.DefaultRequestHeaders.Clear();
             });
             builder.Services.AddTransient<IFakeApiProxyService, FakeApiProxyService>();
+
+            builder.Services.AddHttpClient("OpenRouteServiceGeocodeSearchApi", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["ExternalServices:OpenRouteServiceGeocodeSearchUri"]);
+                client.Timeout = TimeSpan.FromSeconds(10);
+                client.DefaultRequestHeaders.Clear();
+            });
+            builder.Services.AddHttpClient("OpenRouteServiceDirectionsApi", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["ExternalServices:OpenRouteServiceDirectionsUri"]);
+                client.Timeout = TimeSpan.FromSeconds(10);
+                client.DefaultRequestHeaders.Clear();
+            });
+
+            builder.Services.AddTransient<IOpenRouteService, OpenRouteService>();
 
             var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 

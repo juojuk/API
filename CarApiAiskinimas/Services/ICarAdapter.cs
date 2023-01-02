@@ -1,7 +1,7 @@
 ﻿using CarApiAiskinimas.Models;
 using CarApiAiskinimas.Models.Dto;
 
-namespace CarApiAiskinimas
+namespace CarApiAiskinimas.Services
 {
     public interface ICarAdapter
     {

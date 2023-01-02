@@ -14,5 +14,6 @@ namespace API_mokymai.Services.IServices
         List<GetCurrentReservationDto> GetCurrentReservations(List<Reservation> reservations);
         public List<GetDebtStatusDto> GetCurrentDebts(List<Measure> measures, List<Reservation> reservations);
         List<GetMostPopularAuthorDto> GetMostPopularAuthor(List<Reservation> reservations);
+        public bool GetShippingPrice(int distance, decimal baseShippingPrice, List<AdditinionalShippingPrice> additinionalShippingPrices, out decimal? shippingPrice);
     }
 }

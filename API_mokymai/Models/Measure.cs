@@ -30,6 +30,7 @@
         public decimal MinBorrowingFee { get; set; }
         public decimal MaxBorrowingFee { get; set; }
         public decimal BorrowingFeeRatio { get; set; }
+        public decimal BaseShippingPrice { get; set; }
         public virtual List<Reservation> Reservations{ get; set; }
     }
 }

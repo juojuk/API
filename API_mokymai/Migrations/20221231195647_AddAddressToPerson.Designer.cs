@@ -3,6 +3,7 @@ using System;
 using API_mokymai.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APImokymai.Migrations
 {
     [DbContext(typeof(BookContext))]
-    partial class BookContextModelSnapshot : ModelSnapshot
+    [Migration("20221231195647_AddAddressToPerson")]
+    partial class AddAddressToPerson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,23 +23,6 @@ namespace APImokymai.Migrations
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true);
-
-            modelBuilder.Entity("API_mokymai.Models.AdditinionalShippingPrice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal?>("AdditionalPrice")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("DistanceKm")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AdditinionalShippingPrices");
-                });
 
             modelBuilder.Entity("API_mokymai.Models.Book", b =>
                 {
@@ -164,9 +150,6 @@ namespace APImokymai.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("BaseShippingPrice")
-                        .HasColumnType("TEXT");
-
                     b.Property<decimal>("BorrowingFeeRatio")
                         .HasColumnType("TEXT");
 
@@ -256,9 +239,6 @@ namespace APImokymai.Migrations
 
                     b.Property<DateTime?>("ReturnDateTime")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("ShippingStatus")
-                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

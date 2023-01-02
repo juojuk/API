@@ -1,6 +1,8 @@
 using CarApiAiskinimas.Models;
 using CarApiAiskinimas.Models.Dto;
 using CarApiAiskinimas.Repositories;
+using CarApiAiskinimas.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
@@ -24,6 +26,7 @@ namespace CarApiAiskinimas.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class CarController : ControllerBase
     {
 
@@ -31,129 +34,154 @@ namespace CarApiAiskinimas.Controllers
         private readonly ICarRepository _repository;
         private readonly ICarAdapter _adapter;
 
-
-        public CarController(ILogger<CarController> logger, ICarRepository repository, ICarAdapter adapter)
+        public CarController(ILogger<CarController> logger,
+            ICarRepository repository,
+            ICarAdapter adapter)
         {
             _logger = logger;
             _repository = repository;
             _adapter = adapter;
         }
 
+
+
         /// <summary>
-        /// Gaunamas
+        /// Gaunamas duomenu bazeje esanciu automobiliu sarasas
         /// </summary>
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetCarResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
         public IActionResult Get(int id)
         {
             if (!_repository.Exist(id))
             {
                 _logger.LogInformation("Car with id {id} not found", id);
-            };
                 return NotFound();
+            }
 
             var entity = _repository.Get(id);
             var model = _adapter.Bind(entity);
-                
+
             return Ok(model);
         }
 
+
         /// <summary>
-        /// Gaunamas visas arba iðfiltruotas db esanèiø automobiliø sàraðas
+        /// Gaunamas visas arba isfiltruotas duomenu bazeje esanciu automobiliu sarasas
         /// </summary>
         /// <returns></returns>
-        [HttpGet()]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetCarResult>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces(MediaTypeNames.Application.Json)]
-        public IActionResult Get([FromQuery]FilterCarRequest req)
+        public IActionResult Get([FromQuery] FilterCarRequest req)
         {
             _logger.LogInformation("Getting car list with parameters {req}", JsonConvert.SerializeObject(req));
 
-            IEnumerable<Car> entities = _repository.All();
+            IEnumerable<Car> entities = _repository.All().ToList();
 
             if (req.Mark != null)
-                entities = _repository.Find(x => x.Mark == req.Mark);
+                entities = entities.Where(x => x.Mark == req.Mark);
 
             if (req.Model != null)
-                entities = _repository.Find(x => x.Model == req.Model);
+                entities = entities.Where(x => x.Model == req.Model);
 
             if (req.GearBox != null)
-                entities = _repository.Find(x => x.GearBox == Enum.Parse<ECarGearBox>(req.GearBox));
+                entities = entities.Where(x => x.GearBox == (ECarGearBox)Enum.Parse(typeof(ECarGearBox), req.GearBox));
 
             if (req.Fuel != null)
-                entities = _repository.Find(x => x.Fuel == Enum.Parse<ECarFuel>(req.Fuel));
+                entities = entities.Where(x => x.Fuel == (ECarFuel)Enum.Parse(typeof(ECarFuel), req.Fuel));
 
-            var model  = entities.Select(x => _adapter.Bind(x));
+            var model = entities?.Select(x => _adapter.Bind(x));
 
             return Ok(model);
         }
 
 
+
+        /*
+    Built-in attributes 
+   [ValidateNever]: Indicates that a property or parameter should be excluded from validation.
+   [CreditCard]: Validates that the property has a credit card format. Requires jQuery Validation Additional Methods.
+   [Compare]: Validates that two properties in a model match.
+   [EmailAddress]: Validates that the property has an email format.
+   [Phone]: Validates that the property has a telephone number format.
+   [Range]: Validates that the property value falls within a specified range.
+   [RegularExpression]: Validates that the property value matches a specified regular expression.
+   [Required]: Validates that the field isn't null. See [Required] attribute for details about this attribute's behavior.
+   [StringLength]: Validates that a string property value doesn't exceed a specified length limit.
+   [Url]: Validates that the property has a URL format.
+   [Remote]: Validates input on the client by calling an action method on the server. See [Remote] attribute for details about this attribute's behavior.
+    */
+
+
         /// <summary>
-        /// Iraðomas automobilis i duomenø bazæ
+        /// Irasomas automobilis i duomenu baze
         /// </summary>
         /// <returns></returns>
         /// <response code="400">paduodamos informacijos validacijos klaidos </response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult Post([FromBody]PostCarRequest req)
+        public IActionResult Post(PostCarRequest req)
         {
-            if(!Enum.TryParse<ECarGearBox>(req.GearBox, out _))
+            if (!Enum.TryParse(typeof(ECarGearBox), req.GearBox, out _))
             {
                 var validValues = Enum.GetNames(typeof(ECarGearBox));
-                ModelState.AddModelError(nameof(req.GearBox), $"Not valid value. Valid values are: {string.Join(", ",validValues)}");
-            };
-
-            if (!Enum.TryParse<ECarFuel>(req.Fuel, out _))
+                ModelState.AddModelError(nameof(req.GearBox), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
+            }
+            if (!Enum.TryParse(typeof(ECarFuel), req.Fuel, out _))
             {
                 var validValues = Enum.GetNames(typeof(ECarFuel));
                 ModelState.AddModelError(nameof(req.Fuel), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
-            };
+            }
 
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return ValidationProblem(ModelState);
             }
 
+
             var entity = _adapter.Bind(req);
             var id = _repository.Create(entity);
 
-            return Created("PostCar", new {Id = id /*TODO*/});
+            return Created("PostCar", new { Id = id });
         }
 
+
         /// <summary>
-        /// Modifikuojamas automobilis duomenø bazëje
+        /// Modifikuojamas automobilis duomenu bazeje
         /// </summary>
         /// <returns></returns>
+        /// <response code="400">paduodamos informacijos validacijos klaidos </response>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Consumes(MediaTypeNames.Application.Json)]
         public IActionResult Put(PutCarRequest req)
         {
-            if (!Enum.TryParse<ECarGearBox>(req.GearBox, out _))
+            if (!Enum.TryParse(typeof(ECarGearBox), req.GearBox, out _))
             {
                 var validValues = Enum.GetNames(typeof(ECarGearBox));
                 ModelState.AddModelError(nameof(req.GearBox), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
-            };
-
-            if (!Enum.TryParse<ECarFuel>(req.Fuel, out _))
+            }
+            if (!Enum.TryParse(typeof(ECarFuel), req.Fuel, out _))
             {
                 var validValues = Enum.GetNames(typeof(ECarFuel));
                 ModelState.AddModelError(nameof(req.Fuel), $"Not valid value. Valid values are: {string.Join(", ", validValues)}");
-            };
+            }
 
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return ValidationProblem(ModelState);
             }
@@ -171,27 +199,24 @@ namespace CarApiAiskinimas.Controllers
         }
 
         /// <summary>
-        /// Trinamas automobilis ið duomenø bazës
+        /// Trinamas automobilis is duomenu bazes
         /// </summary>
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Produces(MediaTypeNames.Application.Json)]
         public IActionResult Delete(int id)
         {
+
             if (!_repository.Exist(id))
             {
                 _logger.LogInformation("Car with id {id} not found", id);
                 return NotFound();
             }
-
             var entity = _repository.Get(id);
             _repository.Remove(entity);
 
             return NoContent();
         }
-
-
     }
 }

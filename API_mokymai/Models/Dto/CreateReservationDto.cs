@@ -6,5 +6,6 @@ namespace API_mokymai.Models.Dto
     {
         public int VartotojoId { get; set; }
         public int KnygosId { get; set; }
+        public bool ShippingStatus { get; set; }
     }
 }

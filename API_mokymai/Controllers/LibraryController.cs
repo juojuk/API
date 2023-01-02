@@ -2,6 +2,7 @@
 using API_mokymai.Models;
 using API_mokymai.Models.Dto;
 using API_mokymai.Repository.IRepository;
+using API_mokymai.Services;
 using API_mokymai.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -23,9 +24,11 @@ namespace API_mokymai.Controllers
         private readonly IReservationRepository _reservationRepo;
         private readonly IPersonRepository _personRepo;
         private readonly IBookWrapper _bookWrapper;
+        private readonly IOpenRouteService _openRouteService;
+        private readonly IShippingPriceRepo _shippingPriceRepo;
         private readonly ILogger<LibraryController> _logger;
 
-        public LibraryController(IBookManager bookManager, IBookRepository bookRepo, IMeasureRepository measureRepo, IReservationRepository reservationRepo, IPersonRepository personRepo, IBookWrapper bookWrapper, ILogger<LibraryController> logger)
+        public LibraryController(IBookManager bookManager, IBookRepository bookRepo, IMeasureRepository measureRepo, IReservationRepository reservationRepo, IPersonRepository personRepo, IBookWrapper bookWrapper, ILogger<LibraryController> logger, IOpenRouteService openRouteService, IShippingPriceRepo shippingPriceRepo)
         {
             _bookManager = bookManager;
             _bookRepo = bookRepo;
@@ -34,6 +37,8 @@ namespace API_mokymai.Controllers
             _personRepo = personRepo;
             _bookWrapper = bookWrapper;
             _logger = logger;
+            _openRouteService = openRouteService;
+            _shippingPriceRepo = shippingPriceRepo;
         }
 
         /// <summary>
@@ -291,7 +296,7 @@ namespace API_mokymai.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> Post(CreateReservationDto reservation)
+        public async Task<IActionResult> Post([FromQuery]CreateReservationDto reservation)
         {
             var book = await _bookRepo.GetAsync(b => b.Id == reservation.KnygosId);
             var user = await _personRepo.GetAsync(p => p.Id == reservation.VartotojoId);
@@ -342,16 +347,44 @@ namespace API_mokymai.Controllers
                 ModelState.AddModelError(nameof(measures), "List of measures is empty");
             }
 
+            if (reservation.ShippingStatus == true)
+            {
+                try
+                {
+                    var coordinates = await _openRouteService.GetCoordinates(user);
+                    var distance = await _openRouteService.GetDistance(coordinates);
+                    var distanceRangePrices = await _shippingPriceRepo.GetAllAsync();
+                    var baseShippingPrice = measures.Last().BaseShippingPrice;
+                    var isAvailableShipping = _bookManager.GetShippingPrice(distance, baseShippingPrice, distanceRangePrices, out var shippingPrice);
+
+                    if (!isAvailableShipping)
+                    {
+                        _logger.LogInformation("Shipping is not available");
+                        ModelState.AddModelError(nameof(shippingPrice), "Shipping area is out of range");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Coordinates and distance are not available");
+                    ModelState.AddModelError(nameof(reservation.ShippingStatus), "Coordinates and distance are not available");
+                    return ValidationProblem(ModelState);
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 return ValidationProblem(ModelState);
             }
 
-            var model = _bookWrapper.Bind(reservation, measures.Last().Id);
+            var reservationModel = _bookWrapper.Bind(reservation, measures.Last().Id);
 
-            await _reservationRepo.CreateAsync(model);
+            await _reservationRepo.CreateAsync(reservationModel);
 
-            return CreatedAtRoute("PostReservation", new { id = model.Id }, reservation);
+            //await _shippingPriceRepo.CreateAsync(new ShippingOrder() { ReservationId = reservationModel.Id });
+
+
+            return CreatedAtRoute("PostReservation", new { id = reservationModel.Id }, reservation);
         }
 
 

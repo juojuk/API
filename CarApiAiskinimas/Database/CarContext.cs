@@ -10,11 +10,12 @@ namespace CarApiAiskinimas.Database
         {
         }
 
-        public DbSet<Car> Cars { get; set; }// cia yra db lentelė
+        public DbSet<Car> Cars { get; set; } //cia yra db lentele
+        public DbSet<LocalUser> Users { get; set; }
+        public DbSet<CarUser> CarUser { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Car>().HasKey(x => x.Id);
 
             modelBuilder.Entity<Car>().Property(x => x.Mark)
@@ -22,8 +23,8 @@ namespace CarApiAiskinimas.Database
                 .HasMaxLength(50);
 
             modelBuilder.Entity<Car>().Property(x => x.Model)
-                .IsRequired()
-                .HasMaxLength(50);
+               .IsRequired()
+               .HasMaxLength(50);
 
             modelBuilder.Entity<Car>().Property(x => x.Year)
                 .IsRequired();
@@ -37,12 +38,19 @@ namespace CarApiAiskinimas.Database
                 .HasMaxLength(15);
 
             modelBuilder.Entity<Car>().Property(x => x.Fuel)
-                .HasConversion(v => v.ToString(), v => (ECarFuel)Enum.Parse(typeof(ECarGearBox), v))
+                .HasConversion(v => v.ToString(), v => (ECarFuel)Enum.Parse(typeof(ECarFuel), v))
                 .IsRequired()
                 .HasMaxLength(15);
 
             modelBuilder.Entity<Car>().HasData(CarInitialData.DataSeed);
 
+
+            modelBuilder.Entity<LocalUser>().HasKey(x => x.Id);
+
+            modelBuilder.Entity<CarUser>().HasKey(x => new { x.CarId, x.LocalUserId });
+
+
         }
+
     }
 }
