@@ -1,8 +1,9 @@
-﻿using CarApiAiskinimas.Models;
+﻿using CarApiAiskinimas.Models.Dto;
 using CarApiAiskinimas.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 
 namespace CarApiAiskinimas.Controllers
 {
@@ -12,42 +13,32 @@ namespace CarApiAiskinimas.Controllers
     public class UserCarController : ControllerBase
     {
         private readonly IUserCarRepository _repository;
-        private readonly IHttpContextAccessor _contextAccessor;
-
-        public UserCarController(IUserCarRepository repository, IHttpContextAccessor contextAccessor)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<UserCarController> _logger;
+        public UserCarController(IUserCarRepository repository,
+            IHttpContextAccessor httpContextAccessor,
+            ILogger<UserCarController> logger)
         {
             _repository = repository;
-            _contextAccessor = contextAccessor;
+            _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
         [HttpGet("/api/user/{key}/cars")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetCarResponse>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetUserCarResponse>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [Produces(MediaTypeNames.Application.Json)]
         public IActionResult Get(int key)
         {
+            var currentUserId = int.Parse(_httpContextAccessor.HttpContext.User.Identity.Name);
+            if (currentUserId != key)
+            {
+                _logger.LogWarning("User {currentUserId} tried to access user {key} cars", currentUserId, key);
+                return Forbid();
+            }
             var cars = _repository.Get(key);
-            return Ok(cars.Select(c => new GetCarResponse(c)));
+            return Ok(cars.Select(c => new GetUserCarResponseCar(c)));
         }
-    }
-
-    public class GetCarResponse
-    {
-        public GetCarResponse(Car car)
-        {
-            Id = car.Id;
-            Mark = car.Mark;
-            Model = car.Model;
-            Year = car.Year;
-            PlateNumber = car.PlateNumber;
-            GearBox = car.GearBox;
-            Fuel = car.Fuel;
-        }
-
-        public int Id { get; set; }
-        public string Mark { get; set; }
-        public string Model { get; set; }
-        public DateTime Year { get; set; }
-        public string? PlateNumber { get; set; }
-        public ECarGearBox GearBox { get; set; }
-        public ECarFuel Fuel { get; set; }
     }
 }

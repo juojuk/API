@@ -18,6 +18,8 @@ namespace CarApiAiskinimas.Services
                 Fuel = car.Fuel.ToString()
             };
         }
+
+
         public Car Bind(PostCarRequest car)
         {
             return new Car

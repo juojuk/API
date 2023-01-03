@@ -7,7 +7,7 @@ namespace CarApiAiskinimas.Services
 {
     public class JwtService : IJwtService
     {
-        private string _secret;
+        private readonly string _secret;
 
         public JwtService(IConfiguration configuration)
         {

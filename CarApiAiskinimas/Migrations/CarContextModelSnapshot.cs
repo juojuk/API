@@ -52,7 +52,7 @@ namespace CarApiAiskinimas.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cars");
+                    b.ToTable("Cars", (string)null);
 
                     b.HasData(
                         new
@@ -107,7 +107,7 @@ namespace CarApiAiskinimas.Migrations
 
                     b.HasKey("CarId", "LocalUserId");
 
-                    b.ToTable("CarUser");
+                    b.ToTable("CarUser", (string)null);
                 });
 
             modelBuilder.Entity("CarApiAiskinimas.Models.LocalUser", b =>
@@ -134,7 +134,7 @@ namespace CarApiAiskinimas.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 #pragma warning restore 612, 618
         }

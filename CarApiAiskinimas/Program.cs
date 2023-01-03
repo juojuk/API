@@ -1,5 +1,4 @@
 using CarApiAiskinimas.Database;
-using CarApiAiskinimas.Models;
 using CarApiAiskinimas.Repositories;
 using CarApiAiskinimas.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,10 +21,17 @@ namespace CarApiAiskinimas
             {
                 options.UseSqlite(builder.Configuration.GetConnectionString("CarConnectionString"));
             });
+
+            builder.Services.AddMokymaiServices();
+
+            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
             builder.Services.AddTransient<ICarRepository, CarRepository>();
             builder.Services.AddTransient<ICarAdapter, CarAdapter>();
             builder.Services.AddTransient<ICarLeasingService, CarLeasingService>();
             builder.Services.AddTransient<IUserRepository, UserRepository>();
+            builder.Services.AddTransient<IUserCarRepository, UserCarRepository>();
+
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IJwtService, JwtService>();

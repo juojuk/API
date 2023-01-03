@@ -122,5 +122,14 @@ namespace API_mokymai.Services
                 DebtStatus = reservation.SkolosStatusas,
             };
         }
+
+        public AdditionalShippingPrice Bind(CreateAdditShippingPriceDto shippingPrice)
+        {
+            return new AdditionalShippingPrice
+            {
+                DistanceKmId = shippingPrice.AtstumasKm,
+                AdditionalPrice = shippingPrice.PristatymoKaina,
+            };
+        }
     }
 }

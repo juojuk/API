@@ -13,6 +13,7 @@ namespace API_mokymai.Services.IServices
         Book Bind(UpdateBookDto book);
         UpdateReservationDto Bind(Reservation reservation);
         public Reservation Bind(UpdateReservationDto reservation);
+        public AdditionalShippingPrice Bind(CreateAdditShippingPriceDto shippingPrice);
 
     }
 }

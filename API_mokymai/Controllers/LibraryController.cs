@@ -258,6 +258,39 @@ namespace API_mokymai.Controllers
         }
 
         /// <summary>
+        /// Irasoma papildoma pristatymo kaina i duomenu baze
+        /// </summary>
+        /// <param name="shippingPrice"></param>
+        /// <returns></returns>
+        /// <response code="400">paduodamos informacijos validacijos klaidos </response>
+        [HttpPost("shippingPrice/new")]
+        //[Authorize(Roles = "1")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateAdditShippingPriceDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> Post([FromQuery] CreateAdditShippingPriceDto shippingPrice)
+        {
+            try
+            {
+                var shippingPriceModel = _bookWrapper.Bind(shippingPrice);
+                await _shippingPriceRepo.CreateAsync(shippingPriceModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Shipping arguments {shippingPrice} are incorrect", shippingPrice);
+                ModelState.AddModelError(nameof(shippingPrice), "Shipping arguments are incorrect");
+                return ValidationProblem(ModelState);
+
+            }
+
+            return Created("shippingPrice/new", shippingPrice);
+
+        }
+
+
+        /// <summary>
         /// Irašomi rodikliai i duomenų bazę
         /// </summary>
         /// <param name="measure"></param>
