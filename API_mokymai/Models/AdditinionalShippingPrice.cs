@@ -1,6 +1,6 @@
 ﻿namespace API_mokymai.Models
 {
-    public class AdditinionalShippingPrice
+    public class AdditionalShippingPrice
     {
         public int Id { get; set; }
         public int DistanceKm { get; set; }

@@ -26,9 +26,10 @@ namespace API_mokymai.Controllers
         private readonly IBookWrapper _bookWrapper;
         private readonly IOpenRouteService _openRouteService;
         private readonly IShippingPriceRepo _shippingPriceRepo;
+        private readonly IShippingOrderRepository _shippingOrderRepository;
         private readonly ILogger<LibraryController> _logger;
 
-        public LibraryController(IBookManager bookManager, IBookRepository bookRepo, IMeasureRepository measureRepo, IReservationRepository reservationRepo, IPersonRepository personRepo, IBookWrapper bookWrapper, ILogger<LibraryController> logger, IOpenRouteService openRouteService, IShippingPriceRepo shippingPriceRepo)
+        public LibraryController(IBookManager bookManager, IBookRepository bookRepo, IMeasureRepository measureRepo, IReservationRepository reservationRepo, IPersonRepository personRepo, IBookWrapper bookWrapper, ILogger<LibraryController> logger, IOpenRouteService openRouteService, IShippingPriceRepo shippingPriceRepo, IShippingOrderRepository shippingOrderRepository)
         {
             _bookManager = bookManager;
             _bookRepo = bookRepo;
@@ -39,6 +40,7 @@ namespace API_mokymai.Controllers
             _logger = logger;
             _openRouteService = openRouteService;
             _shippingPriceRepo = shippingPriceRepo;
+            _shippingOrderRepository = shippingOrderRepository;
         }
 
         /// <summary>
@@ -301,6 +303,9 @@ namespace API_mokymai.Controllers
             var book = await _bookRepo.GetAsync(b => b.Id == reservation.KnygosId);
             var user = await _personRepo.GetAsync(p => p.Id == reservation.VartotojoId);
             var measures = await _measureRepo.GetAllAsync();
+            int distance = 0;
+            var additionalShippingPrices = await _shippingPriceRepo.GetAllAsync();
+            var baseShippingPrice = measures.Last().BaseShippingPrice;
 
 
             if (book == null)
@@ -352,15 +357,13 @@ namespace API_mokymai.Controllers
                 try
                 {
                     var coordinates = await _openRouteService.GetCoordinates(user);
-                    var distance = await _openRouteService.GetDistance(coordinates);
-                    var distanceRangePrices = await _shippingPriceRepo.GetAllAsync();
-                    var baseShippingPrice = measures.Last().BaseShippingPrice;
-                    var isAvailableShipping = _bookManager.GetShippingPrice(distance, baseShippingPrice, distanceRangePrices, out var shippingPrice);
+                    distance = await _openRouteService.GetDistance(coordinates);
+                    var isShippingAvailable = _bookManager.IsShippingAvailable(distance, baseShippingPrice, additionalShippingPrices);
 
-                    if (!isAvailableShipping)
+                    if (!isShippingAvailable)
                     {
                         _logger.LogInformation("Shipping is not available");
-                        ModelState.AddModelError(nameof(shippingPrice), "Shipping area is out of range");
+                        ModelState.AddModelError(nameof(isShippingAvailable), "Shipping area is out of range");
                     }
 
                 }
@@ -381,8 +384,12 @@ namespace API_mokymai.Controllers
 
             await _reservationRepo.CreateAsync(reservationModel);
 
-            //await _shippingPriceRepo.CreateAsync(new ShippingOrder() { ReservationId = reservationModel.Id });
+            if (reservation.ShippingStatus == true)
+            {
+                var shippingPrice = _bookManager.GetShippingPrice(distance, baseShippingPrice, additionalShippingPrices);
+                await _shippingOrderRepository.CreateAsync(new ShippingOrder() { ConfirmationDate = null, ReservationId = reservationModel.Id });
 
+            }
 
             return CreatedAtRoute("PostReservation", new { id = reservationModel.Id }, reservation);
         }

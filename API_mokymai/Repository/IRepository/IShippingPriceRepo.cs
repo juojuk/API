@@ -2,9 +2,9 @@
 
 namespace API_mokymai.Repository.IRepository
 {
-    public interface IShippingPriceRepo: IRepository<AdditinionalShippingPrice>
+    public interface IShippingPriceRepo: IRepository<AdditionalShippingPrice>
     {
-        Task<AdditinionalShippingPrice> UpdateAsync(AdditinionalShippingPrice price);
+        Task<AdditionalShippingPrice> UpdateAsync(AdditionalShippingPrice price);
 
     }
 }

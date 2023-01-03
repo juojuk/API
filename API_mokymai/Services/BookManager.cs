@@ -120,23 +120,18 @@ namespace API_mokymai.Services
             return mostPopularAuthorDto;
         }
 
-        public bool GetShippingPrice(int distance, decimal baseShippingPrice, List<AdditinionalShippingPrice> additinionalShippingPrices, out decimal? shippingPrice)
+        public bool IsShippingAvailable(int distance, decimal baseShippingPrice, List<AdditionalShippingPrice> additionalShippingPrices)
         {
-            var additionalshippingPrice = additinionalShippingPrices.Where(d => d.DistanceKm > distance).OrderBy(d => d.DistanceKm).FirstOrDefault().AdditionalPrice;
+            var additionalshippingPrice = additionalShippingPrices.Where(d => d.DistanceKm > distance).OrderBy(d => d.DistanceKm).FirstOrDefault().AdditionalPrice;
 
-            if (additionalshippingPrice.HasValue)
-            {
-                shippingPrice = baseShippingPrice + additionalshippingPrice.Value;
-                return true;
-            }
-            else
-            {
-                shippingPrice = null;
-                return false;
-
-            }
-
+            return additionalshippingPrice.HasValue ? true : false;
         }
 
+        public decimal? GetShippingPrice(int distance, decimal baseShippingPrice, List<AdditionalShippingPrice> additionalShippingPrices)
+        {
+            var additionalshippingPrice = additionalShippingPrices.Where(d => d.DistanceKm > distance).OrderBy(d => d.DistanceKm).FirstOrDefault().AdditionalPrice;
+
+            return additionalshippingPrice.HasValue ? baseShippingPrice + additionalshippingPrice.Value : null;
+        }
     }
 }

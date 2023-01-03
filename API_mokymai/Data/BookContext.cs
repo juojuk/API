@@ -18,7 +18,7 @@ namespace API_mokymai.Data
         public DbSet<Person> Persons { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
-        public DbSet<AdditinionalShippingPrice>  AdditinionalShippingPrices { get; set; }
+        public DbSet<AdditionalShippingPrice>  AdditionalShippingPrices { get; set; }
         public DbSet<ShippingOrder> ShippingOrders { get; set; }
 
 

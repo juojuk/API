@@ -4,7 +4,7 @@ using API_mokymai.Repository.IRepository;
 
 namespace API_mokymai.Repository
 {
-    public class ShippingPriceRepo : Repository<AdditinionalShippingPrice>, IShippingPriceRepo
+    public class ShippingPriceRepo : Repository<AdditionalShippingPrice>, IShippingPriceRepo
     {
         private readonly BookContext _db;
         public ShippingPriceRepo(BookContext db) : base(db)
@@ -12,9 +12,9 @@ namespace API_mokymai.Repository
             _db = db;
         }
 
-        public async Task<AdditinionalShippingPrice> UpdateAsync(AdditinionalShippingPrice price)
+        public async Task<AdditionalShippingPrice> UpdateAsync(AdditionalShippingPrice price)
         {
-            _db.AdditinionalShippingPrices.Update(price);
+            _db.AdditionalShippingPrices.Update(price);
             await _db.SaveChangesAsync();
 
             return price;
