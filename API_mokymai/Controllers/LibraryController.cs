@@ -2,7 +2,6 @@
 using API_mokymai.Models;
 using API_mokymai.Models.Dto;
 using API_mokymai.Repository.IRepository;
-using API_mokymai.Services;
 using API_mokymai.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -421,7 +420,6 @@ namespace API_mokymai.Controllers
             {
                 var shippingPrice = _bookManager.GetShippingPrice(distance, baseShippingPrice, additionalShippingPrices);
                 await _shippingOrderRepository.CreateAsync(new ShippingOrder() { ConfirmationDate = null, ReservationId = reservationModel.Id });
-
             }
 
             return CreatedAtRoute("PostReservation", new { id = reservationModel.Id }, reservation);

@@ -11,5 +11,7 @@
         /// (1, "admin"),(2, "editor"),(3, "viewer")
         /// </summary>
         public int RoleId { get; set; }
+        public string Address { get; set; }
+
     }
 }

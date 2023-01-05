@@ -118,7 +118,8 @@ namespace API_mokymai.Repository
                 PasswordSalt = passwordSalt,
                 Name = registrationRequest.Name,
                 Surname = registrationRequest.Surname,
-                RoleId = registrationRequest.RoleId
+                RoleId = registrationRequest.RoleId,
+                Address = registrationRequest.Address,
             };
 
             _db.Persons.Add(user);

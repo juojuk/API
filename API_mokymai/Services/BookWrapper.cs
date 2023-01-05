@@ -92,6 +92,7 @@ namespace API_mokymai.Services
                 PersonId = reservation.VartotojoId,
                 BookId = reservation.KnygosId,
                 MeasureId = measureId,
+                ShippingStatus = reservation.ShippingStatus,
             };
         }
 

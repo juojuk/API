@@ -29,6 +29,7 @@ namespace API_mokymai.Controllers
             }
 
             return Ok(loginResponse);
+
         }
 
         [HttpPost("register")]

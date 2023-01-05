@@ -44,7 +44,7 @@ namespace API_mokymai.Data
                 .HasForeignKey(d => d.BookId)
                 .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Reservation>()
-                .HasOne(b => b.Person)
+                .HasOne<Person>(b => b.Person)
                 .WithMany(d => d.Reservations)
                 .HasForeignKey(d => d.PersonId)
                 .OnDelete(DeleteBehavior.NoAction);

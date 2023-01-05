@@ -47,7 +47,7 @@ namespace API_mokymai
             builder.Services.AddScoped<IShippingOrderRepository, ShippingOrderRepository>();
             builder.Services.AddScoped<IShippingPriceRepo, ShippingPriceRepo>();
             builder.Services.AddScoped<IPersonRepository, PersonRepository>();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
             builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddHttpClient("FakeApi", client =>
@@ -148,6 +148,14 @@ namespace API_mokymai
                 });
             });
 
+
+            builder.Services.AddCors(p => p.AddPolicy("corsforlibrary", builder =>
+            {
+                builder.WithOrigins("*")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            }));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -157,6 +165,7 @@ namespace API_mokymai
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("corsforlibrary");
             app.UseHttpsRedirection();
 
             app.UseAuthentication(); //Order matters

@@ -122,7 +122,10 @@ namespace API_mokymai.Services
 
         public bool IsShippingAvailable(int distance, decimal baseShippingPrice, List<AdditionalShippingPrice> additionalShippingPrices)
         {
-            var additionalshippingPrice = additionalShippingPrices.Where(d => d.DistanceKmId > distance).OrderBy(d => d.DistanceKmId).FirstOrDefault().AdditionalPrice;
+            decimal? additionalshippingPrice = null;
+
+            if (additionalShippingPrices.Any(d => d.DistanceKmId > distance))
+                additionalshippingPrice = additionalShippingPrices.Where(d => d.DistanceKmId > distance).OrderBy(d => d.DistanceKmId).FirstOrDefault().AdditionalPrice;
 
             return additionalshippingPrice.HasValue ? true : false;
         }
