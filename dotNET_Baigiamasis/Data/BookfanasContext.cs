@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dotNET_Baigiamasis.Data
 {
+
     public class BookfanasContext: DbContext
 
     {
