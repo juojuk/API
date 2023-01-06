@@ -1,4 +1,4 @@
-﻿using dotNET_Baigiamasis.Models;
+using dotNET_Baigiamasis.Models;
 
 namespace dotNET_Baigiamasis.Data
 {
