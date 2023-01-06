@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace API_mokymai.Models
+namespace dotNET_Baigiamasis.Models
 {
     [Table("Persons")]
     public class Person
