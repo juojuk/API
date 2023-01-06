@@ -1,4 +1,4 @@
-﻿using API_mokymai.Models;
+﻿using dotNET_Baigiamasis.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotNET_Baigiamasis.Data
