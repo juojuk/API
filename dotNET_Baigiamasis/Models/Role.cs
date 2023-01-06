@@ -17,8 +17,10 @@ namespace API_mokymai.Models
 
         [Key]
         public int Id { get; set; }
+
         [MaxLength(10)]
         public string Member { get; set; }
+
         public List<Person> Persons { get; set; }
     }
 
