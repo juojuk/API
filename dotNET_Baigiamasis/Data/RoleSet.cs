@@ -1,6 +1,6 @@
 ﻿using API_mokymai.Models;
 
-namespace API_mokymai.Data
+namespace dotNET_Baigiamasis.Data
 {
     public static class RoleSet
     {
