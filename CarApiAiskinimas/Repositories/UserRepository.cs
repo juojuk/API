@@ -5,12 +5,6 @@ using CarApiAiskinimas.Services;
 
 namespace CarApiAiskinimas.Repositories
 {
-    public interface IUserRepository
-    {
-        bool Exist(string userName);
-        int Register(LocalUser user);
-        bool TryLogin(string userName, string password, out LocalUser? user);
-    }
     public class UserRepository : IUserRepository
     {
         private readonly CarContext _context;
