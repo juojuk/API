@@ -13,7 +13,7 @@ namespace dotNET_Baigiamasis.Models
         public string FirstName { get; set; }
 
         [MaxLength(60)]
-        public string Lastname { get; set; }
+        public string LastName { get; set; }
 
         [EmailAddress]
         public string Email { get; set; }
