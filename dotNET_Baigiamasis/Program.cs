@@ -1,3 +1,6 @@
+using dotNET_Baigiamasis.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace dotNET_Baigiamasis
 {
     public class Program
@@ -7,6 +10,12 @@ namespace dotNET_Baigiamasis
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddDbContext<BookfanasContext>(option =>
+            {
+                option.UseSqlite(builder.Configuration.GetConnectionString("DefaultSQLiteConnection"));
+            });
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
