@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Repository\IRepository\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
