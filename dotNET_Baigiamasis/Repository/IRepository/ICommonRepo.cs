@@ -2,7 +2,7 @@
 
 namespace dotNET_Baigiamasis.Repository.IRepository
 {
-    public interface IRepository<TEntity> where TEntity : class
+    public interface ICommonRepo<TEntity> where TEntity : class
     {
         Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? filter = null);
         Task<TEntity> GetAsync(Expression<Func<TEntity, bool>>? filter, bool tracked = true);
