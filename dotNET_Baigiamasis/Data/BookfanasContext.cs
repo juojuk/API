@@ -18,9 +18,9 @@ namespace dotNET_Baigiamasis.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Role>()
-                .HasData(
-                RoleSet.Roles
-                );
+                .HasData(RoleSet.Roles);
+            modelBuilder.Entity<Person>()
+                .HasData(UserSet.Users);
 
             modelBuilder.Entity<Person>()
                 .HasIndex(i => i.Email)
