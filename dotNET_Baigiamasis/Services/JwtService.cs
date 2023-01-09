@@ -1,11 +1,12 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using dotNET_Baigiamasis.Services.IServices;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace dotNET_Baigiamasis.Services
 {
-    public class JwtService
+    public class JwtService : IJwtService
     {
         private string _secretKey;
         public JwtService(IConfiguration conf)
