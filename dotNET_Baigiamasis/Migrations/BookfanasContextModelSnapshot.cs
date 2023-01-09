@@ -70,6 +70,21 @@ namespace dotNETBaigiamasis.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Persons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = " ",
+                            City = " ",
+                            Country = " ",
+                            Email = "admin@bookfanas.eu",
+                            FirstName = " ",
+                            LastName = " ",
+                            PasswordHash = new byte[0],
+                            PasswordSalt = new byte[0],
+                            RoleId = 1
+                        });
                 });
 
             modelBuilder.Entity("dotNET_Baigiamasis.Models.Role", b =>

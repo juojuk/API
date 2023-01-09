@@ -10,7 +10,7 @@ using dotNET_Baigiamasis.Data;
 namespace dotNETBaigiamasis.Migrations
 {
     [DbContext(typeof(BookfanasContext))]
-    [Migration("20230107203556_Init")]
+    [Migration("20230109184417_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -73,6 +73,21 @@ namespace dotNETBaigiamasis.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Persons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = " ",
+                            City = " ",
+                            Country = " ",
+                            Email = "admin@bookfanas.eu",
+                            FirstName = " ",
+                            LastName = " ",
+                            PasswordHash = new byte[0],
+                            PasswordSalt = new byte[0],
+                            RoleId = 1
+                        });
                 });
 
             modelBuilder.Entity("dotNET_Baigiamasis.Models.Role", b =>
