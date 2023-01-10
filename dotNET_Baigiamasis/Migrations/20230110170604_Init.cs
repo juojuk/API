@@ -64,7 +64,7 @@ namespace dotNETBaigiamasis.Migrations
             migrationBuilder.InsertData(
                 table: "Persons",
                 columns: new[] { "Id", "Address", "City", "Country", "Email", "FirstName", "LastName", "PasswordHash", "PasswordSalt", "RoleId" },
-                values: new object[] { 1, " ", " ", " ", "admin@bookfanas.eu", " ", " ", new byte[0], new byte[0], 1 });
+                values: new object[] { 1, " ", " ", " ", "admin@bookfanas.eu", " ", " ", new byte[] { 246, 9, 181, 154, 36, 121, 138, 51, 122, 36, 221, 81, 140, 159, 106, 166, 166, 73, 199, 66, 221, 44, 132, 251, 219, 38, 29, 20, 65, 55, 206, 146 }, new byte[] { 42, 51, 41, 10, 138, 254, 166, 39, 23, 75, 123, 211, 230, 45, 44, 228, 82, 11, 174, 13, 190, 95, 16, 61, 210, 111, 34, 202, 200, 184, 111, 10, 169, 93, 199, 148, 35, 89, 176, 241, 100, 22, 212, 205, 95, 113, 44, 209, 30, 239, 207, 102, 12, 251, 245, 5, 171, 156, 231, 146, 135, 224, 170, 142 }, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Persons_Email",
