@@ -10,7 +10,7 @@
 
         public int Id { get; set; }
         public string Member { get; set; }
-        public List<Person> Persons { get; set; }
+        public virtual List<Person> Persons { get; set; }
     }
 
 }

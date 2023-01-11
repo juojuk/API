@@ -50,6 +50,7 @@ namespace API_mokymai
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
             builder.Services.AddScoped<IJwtService, JwtService>();
+
             builder.Services.AddHttpClient("FakeApi", client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["ExternalServices:FakeApiUri"]);
