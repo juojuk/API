@@ -1,9 +1,9 @@
 ﻿using CarApiAiskinimas.Models;
+using CarApiAiskinimas.Models.Dto;
 using CarApiAiskinimas.Repositories;
 using CarApiAiskinimas.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace CarApiAiskinimas.Controllers
 {
@@ -67,32 +67,5 @@ namespace CarApiAiskinimas.Controllers
 
 
 
-    }
-
-    public class RegisterUserRequest
-    {
-        [Required]
-        public string? UserName { get; set; }
-
-        [Required]
-        public string? Password { get; set; }
-
-        [Required]
-        public string? Role { get; set; }
-
-    }
-
-    public class LoginRequest
-    {
-        [Required]
-        public string? UserName { get; set; }
-
-        [Required]
-        public string? Password { get; set; }
-    }
-    public class LoginResponse
-    {
-        public string? UserName { get; set; }
-        public string? Token { get; set; }
     }
 }
