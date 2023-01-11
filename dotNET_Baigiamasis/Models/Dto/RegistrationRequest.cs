@@ -1,13 +1,12 @@
-﻿namespace dotNET_Baigiamasis.Models.Dto
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace dotNET_Baigiamasis.Models.Dto
 {
     public class RegistrationRequest
     {
+        [EmailAddress]
         public string Email { get; set; }
-        public string Password { get; set; }
 
-        /// <summary>
-        /// (1, "admin"),(2, "editor"),(3, "viewer")
-        /// </summary>
-        public int RoleId { get; set; }
+        public string Password { get; set; }
     }
 }
